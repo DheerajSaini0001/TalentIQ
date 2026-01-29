@@ -142,6 +142,24 @@ const ResumePreview = () => {
             });
         }
 
+        const certificationsArray = [];
+        if (formData.certification?.name) {
+            certificationsArray.push({
+                name: formData.certification.name,
+                issuer: formData.certification.issuer,
+                year: formData.certification.year
+            });
+        }
+
+        const achievementsArray = [];
+        if (formData.achievement?.title) {
+            achievementsArray.push({
+                title: formData.achievement.title,
+                description: formData.achievement.description,
+                year: formData.achievement.year
+            });
+        }
+
         return {
             title: formData.title,
             personalInfo: {
@@ -165,8 +183,9 @@ const ResumePreview = () => {
             education: educationArray,
             skills: skillsArray,
             projects: projectsArray,
+            certifications: certificationsArray,
+            achievements: achievementsArray,
             internships: internshipsArray,
-            // ... (Other fields can be mapped similarly if present)
             languages: formData.language?.name ? [{ language: formData.language.name, proficiency: formData.language.proficiency }] : [],
             interests: formData.extras?.hobbies ? formData.extras.hobbies.split(',') : [],
             volunteering: formData.extras?.volunteering ? [{ organization: 'Volunteering', description: formData.extras.volunteering }] : [],

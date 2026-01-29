@@ -270,15 +270,51 @@ const CreateResume = () => {
     };
 
     const applyAIResult = (text) => {
-        const updatedProjects = [...formData.projects];
-        const currentDesc = updatedProjects[activeProjectIndex].description;
-        // Clean the text from bullets if they are already there
         const cleanText = text.replace(/^[•-]\s*/, '');
-        updatedProjects[activeProjectIndex].description = currentDesc
-            ? currentDesc + "\n• " + cleanText
-            : "• " + cleanText;
 
-        setFormData({ ...formData, projects: updatedProjects });
+        if (activeProjectIndex === -1) {
+            // Apply to achievements field in work experience (Phase 3)
+            const currentAchievements = formData.latestJob.achievements;
+            const newAchievements = currentAchievements
+                ? currentAchievements + "\n• " + cleanText
+                : "• " + cleanText;
+
+            setFormData({
+                ...formData,
+                latestJob: { ...formData.latestJob, achievements: newAchievements }
+            });
+        } else if (activeProjectIndex === -2) {
+            // Apply to achievement description (Phase 5)
+            const currentDesc = formData.achievement.description;
+            const newDesc = currentDesc
+                ? currentDesc + "\n• " + cleanText
+                : "• " + cleanText;
+
+            setFormData({
+                ...formData,
+                achievement: { ...formData.achievement, description: newDesc }
+            });
+        } else if (activeProjectIndex <= -3) {
+            // Apply to internship description (Phase 6)
+            const internIndex = Math.abs(activeProjectIndex + 3); // Convert -3 to 0, -4 to 1, etc.
+            const updatedInternships = [...formData.internships];
+            const currentDesc = updatedInternships[internIndex].description;
+            updatedInternships[internIndex].description = currentDesc
+                ? currentDesc + "\n• " + cleanText
+                : "• " + cleanText;
+
+            setFormData({ ...formData, internships: updatedInternships });
+        } else {
+            // Apply to project description
+            const updatedProjects = [...formData.projects];
+            const currentDesc = updatedProjects[activeProjectIndex].description;
+            updatedProjects[activeProjectIndex].description = currentDesc
+                ? currentDesc + "\n• " + cleanText
+                : "• " + cleanText;
+
+            setFormData({ ...formData, projects: updatedProjects });
+        }
+
         setAiModalOpen(false);
         setAiPrompt('');
         setAiResults([]);
@@ -607,8 +643,22 @@ const CreateResume = () => {
                                     <div><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Location Type</label><select name="location" value={formData.latestJob.location} onChange={handleJobChange} className="block w-full rounded-md border-0 py-2.5 text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"><option value="On-site">On-site</option><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option></select></div>
                                     <Input label="Start Date" name="startDate" type="date" value={formData.latestJob.startDate} onChange={handleJobChange} />
                                     <div className="space-y-2"><Input label="End Date" name="endDate" type="date" value={formData.latestJob.endDate} onChange={handleJobChange} disabled={formData.latestJob.isCurrent} /><div className="flex items-center"><input id="isCurrent" name="isCurrent" type="checkbox" checked={formData.latestJob.isCurrent} onChange={handleJobChange} className="h-4 w-4 text-blue-600 focus:ring-blue-600 rounded border-slate-300" /><label htmlFor="isCurrent" className="ml-2 block text-sm text-slate-900">I currently work here</label></div></div>
-                                    <div className="md:col-span-2"><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Key Responsibilities</label><textarea name="responsibilities" rows={4} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="• Led a team...&#10;• Designed..." value={formData.latestJob.responsibilities} onChange={handleJobChange} /></div>
-                                    <div className="md:col-span-2"><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Key Achievements</label><textarea name="achievements" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="e.g. Increased conversion by 20%" value={formData.latestJob.achievements} onChange={handleJobChange} /></div>
+                                    <div className="md:col-span-2">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="block text-sm font-medium leading-6 text-slate-900">Key Achievements</label>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setActiveProjectIndex(-1);
+                                                    setAiModalOpen(true);
+                                                }}
+                                                className="text-xs flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium px-2 py-1 rounded bg-purple-50 hover:bg-purple-100 transition-colors"
+                                            >
+                                                <Sparkles className="w-3 h-3" /> AI Write
+                                            </button>
+                                        </div>
+                                        <textarea name="achievements" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="e.g. Increased conversion by 20%" value={formData.latestJob.achievements} onChange={handleJobChange} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -875,7 +925,22 @@ const CreateResume = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <Input label="Title of Achievement" name="title" placeholder="e.g. Hackathon Winner" value={formData.achievement.title} onChange={(e) => handleNestedChange('achievement', e)} />
                                     <Input label="Year" name="year" placeholder="2023" value={formData.achievement.year} onChange={(e) => handleNestedChange('achievement', e)} />
-                                    <div className="md:col-span-2"><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Description</label><textarea name="description" rows={2} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="e.g. Ranked 1st among 500 participants..." value={formData.achievement.description} onChange={(e) => handleNestedChange('achievement', e)} /></div>
+                                    <div className="md:col-span-2">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="block text-sm font-medium leading-6 text-slate-900">Description</label>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setActiveProjectIndex(-2);
+                                                    setAiModalOpen(true);
+                                                }}
+                                                className="text-xs flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium px-2 py-1 rounded bg-purple-50 hover:bg-purple-100 transition-colors"
+                                            >
+                                                <Sparkles className="w-3 h-3" /> AI Write
+                                            </button>
+                                        </div>
+                                        <textarea name="description" rows={2} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="e.g. Ranked 1st among 500 participants..." value={formData.achievement.description} onChange={(e) => handleNestedChange('achievement', e)} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -906,7 +971,19 @@ const CreateResume = () => {
                                             <Input label="Role" name="role" placeholder="e.g. SDE Intern" value={intern.role} onChange={(e) => handleArrayChange('internships', index, e)} />
                                             <Input label="Duration" name="duration" placeholder="e.g. 3 Months" value={intern.duration} onChange={(e) => handleArrayChange('internships', index, e)} />
                                             <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Key Learnings / Description</label>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <label className="block text-sm font-medium leading-6 text-slate-900">Key Learnings / Description</label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setActiveProjectIndex(-3 - index); // Use -3, -4, -5... for internships
+                                                            setAiModalOpen(true);
+                                                        }}
+                                                        className="text-xs flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium px-2 py-1 rounded bg-purple-50 hover:bg-purple-100 transition-colors"
+                                                    >
+                                                        <Sparkles className="w-3 h-3" /> AI Write
+                                                    </button>
+                                                </div>
                                                 <textarea name="description" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="Briefly describe what you learned..." value={intern.description} onChange={(e) => handleArrayChange('internships', index, e)} />
                                             </div>
                                         </div>
@@ -1008,7 +1085,13 @@ const CreateResume = () => {
                         <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-purple-50">
                             <h3 className="text-lg font-semibold text-purple-900 flex items-center gap-2">
                                 <Sparkles className="w-5 h-5 text-purple-600" />
-                                AI Project Describer
+                                {activeProjectIndex <= -3
+                                    ? 'AI Internship Writer'
+                                    : activeProjectIndex === -2
+                                        ? 'AI Achievement Writer'
+                                        : activeProjectIndex === -1
+                                            ? 'AI Achievement Writer'
+                                            : 'AI Project Describer'}
                             </h3>
                             <button onClick={() => setAiModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                                 <X className="w-5 h-5" />
@@ -1019,11 +1102,17 @@ const CreateResume = () => {
                             {!aiResults.length && (
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Describe your project briefly (e.g. "E-commerce app with React and Stripe")
+                                        {activeProjectIndex <= -3
+                                            ? 'Describe your internship experience briefly (e.g. "Worked on backend APIs and learned microservices architecture")'
+                                            : activeProjectIndex === -2
+                                                ? 'Describe your achievement briefly (e.g. "Won first place in college hackathon with 200+ participants")'
+                                                : activeProjectIndex === -1
+                                                    ? 'Describe your achievement briefly (e.g. "Increased team productivity by implementing new workflow")'
+                                                    : 'Describe your project briefly (e.g. "E-commerce app with React and Stripe")'}
                                     </label>
                                     <textarea
                                         className="w-full rounded-md border-slate-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 min-h-[100px] text-sm"
-                                        placeholder="I built a..."
+                                        placeholder={activeProjectIndex <= -3 ? "I learned..." : activeProjectIndex === -2 || activeProjectIndex === -1 ? "I achieved..." : "I built a..."}
                                         value={aiPrompt}
                                         onChange={(e) => setAiPrompt(e.target.value)}
                                         autoFocus

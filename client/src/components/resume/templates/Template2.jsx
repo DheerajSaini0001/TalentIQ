@@ -98,10 +98,23 @@ const Template2 = ({ data }) => {
             {/* Main Content (Right Column) */}
             <div className="col-span-8 p-8 space-y-8">
                 {/* Summary */}
-                {(summaryInputs?.careerGoal) && (
+                {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                     <section>
                         <h3 className="text-lg font-bold uppercase text-slate-800 border-b-2 border-slate-200 pb-2 mb-4">Profile</h3>
-                        <p className="text-slate-600 leading-relaxed">{summaryInputs.careerGoal}</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-xs text-slate-500 font-semibold px-1">
+                            {summaryInputs.yearsOfExperience && <span>Experience: {summaryInputs.yearsOfExperience} Years</span>}
+                            {summaryInputs.currentStatus && <span>Status: {summaryInputs.currentStatus}</span>}
+                            {summaryInputs.industry && <span>Industry: {summaryInputs.industry}</span>}
+                        </div>
+                        {summaryInputs.careerGoal && <p className="text-slate-600 leading-relaxed mb-4">{summaryInputs.careerGoal}</p>}
+
+                        {summaryInputs.keyStrengths?.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {summaryInputs.keyStrengths.map((str, i) => (
+                                    <span key={i} className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-medium border border-slate-200">{str}</span>
+                                ))}
+                            </div>
+                        )}
                     </section>
                 )}
 
@@ -117,7 +130,14 @@ const Template2 = ({ data }) => {
                                         <span className="text-xs text-slate-500 font-semibold">{formatDate(job.startDate)} - {formatDate(job.endDate)}</span>
                                     </div>
                                     <p className="text-sm font-semibold text-blue-600 mb-2">{job.company}, {job.location}</p>
-                                    <p className="text-slate-600 text-sm">{job.description}</p>
+                                    {job.description && (
+                                        <p className="text-slate-600 text-sm whitespace-pre-line leading-relaxed">{job.description}</p>
+                                    )}
+                                    {job.achievements && (
+                                        <div className="mt-2 text-sm text-slate-600">
+                                            <p className="whitespace-pre-line leading-relaxed"><span className="font-medium">Key Achievements:</span><br />{job.achievements}</p>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -152,9 +172,41 @@ const Template2 = ({ data }) => {
                                     <span className="text-xs text-slate-500">{intern.duration}</span>
                                 </div>
                                 <p className="text-sm text-blue-600">{intern.company}</p>
-                                <p className="text-sm text-slate-600 mt-1">{intern.description}</p>
+                                <p className="text-sm text-slate-600 mt-1 whitespace-pre-line leading-relaxed">{intern.description}</p>
                             </div>
                         ))}
+                    </section>
+                )}
+
+                {/* Achievements */}
+                {achievements && achievements.length > 0 && (
+                    <section>
+                        <h3 className="text-lg font-bold uppercase text-slate-800 border-b-2 border-slate-200 pb-2 mb-4">Honors & Awards</h3>
+                        {achievements.map((ach, i) => (
+                            <div key={i} className="mb-4">
+                                <div className="flex justify-between mb-1">
+                                    <h4 className="font-bold text-slate-800">{ach.title}</h4>
+                                    <span className="text-xs text-slate-500">{ach.year}</span>
+                                </div>
+                                <p className="text-sm text-slate-600 mt-1 whitespace-pre-line leading-relaxed">{ach.description}</p>
+                            </div>
+                        ))}
+                    </section>
+                )}
+
+                {/* Certifications */}
+                {certifications && certifications.length > 0 && (
+                    <section>
+                        <h3 className="text-lg font-bold uppercase text-slate-800 border-b-2 border-slate-200 pb-2 mb-4">Certifications</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            {certifications.map((cert, i) => (
+                                <div key={i} className="bg-slate-50 p-3 rounded">
+                                    <h4 className="font-bold text-slate-800 text-sm">{cert.name}</h4>
+                                    <p className="text-xs text-blue-600 font-semibold">{cert.issuer}</p>
+                                    <p className="text-[10px] text-slate-400 mt-1">{cert.year}</p>
+                                </div>
+                            ))}
+                        </div>
                     </section>
                 )}
             </div>

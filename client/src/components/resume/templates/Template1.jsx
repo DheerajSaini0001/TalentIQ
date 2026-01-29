@@ -91,6 +91,11 @@ const Template1 = ({ data }) => {
                     {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                         <section>
                             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1 mb-3">Professional Profile</h3>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-xs text-slate-600 font-medium">
+                                {summaryInputs.yearsOfExperience && <span>Experience: {summaryInputs.yearsOfExperience} Years</span>}
+                                {summaryInputs.currentStatus && <span>Status: {summaryInputs.currentStatus}</span>}
+                                {summaryInputs.industry && <span>Industry: {summaryInputs.industry}</span>}
+                            </div>
                             {summaryInputs.careerGoal && <p className="text-slate-700 mb-3">{summaryInputs.careerGoal}</p>}
                             {summaryInputs.keyStrengths?.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
@@ -124,7 +129,7 @@ const Template1 = ({ data }) => {
                                         )}
                                         {job.achievements && (
                                             <div className="mt-1 text-xs text-slate-600 italic">
-                                                <span className="font-medium">Key Achievement:</span> {job.achievements}
+                                                <p className="whitespace-pre-line leading-relaxed"><span className="font-medium">Key Achievements:</span><br />{job.achievements}</p>
                                             </div>
                                         )}
                                     </div>
@@ -146,7 +151,7 @@ const Template1 = ({ data }) => {
                                         </div>
                                         <div className="text-xs text-slate-600 font-semibold mb-1">{intern.company}</div>
                                         {intern.description && (
-                                            <p className="text-slate-700 text-xs">{intern.description}</p>
+                                            <p className="text-slate-700 text-xs whitespace-pre-line leading-relaxed">{intern.description}</p>
                                         )}
                                     </div>
                                 ))}
@@ -173,7 +178,7 @@ const Template1 = ({ data }) => {
                                         </div>
                                         {proj.role && <p className="text-xs text-slate-500 mb-1 font-medium">{proj.role}</p>}
                                         {proj.technologies && <p className="text-xs text-slate-500 mb-1">Tech: {proj.technologies}</p>}
-                                        {proj.description && <p className="text-slate-700 text-xs">{proj.description}</p>}
+                                        {proj.description && <p className="text-slate-700 text-xs whitespace-pre-line leading-relaxed">{proj.description}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -266,7 +271,7 @@ const Template1 = ({ data }) => {
                                 {achievements.map((ach, i) => (
                                     <li key={i} className="text-xs">
                                         <p className="font-bold text-slate-800">{ach.title}</p>
-                                        <p className="text-slate-600 leading-tight">{ach.description}</p>
+                                        <p className="text-slate-600 whitespace-pre-line leading-relaxed">{ach.description}</p>
                                     </li>
                                 ))}
                             </ul>

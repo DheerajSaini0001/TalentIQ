@@ -19,6 +19,7 @@ const ExperienceForm = ({ resumeData }) => {
         endDate: '',
         current: false,
         description: '',
+        achievements: '',
     });
 
     useEffect(() => {
@@ -36,6 +37,7 @@ const ExperienceForm = ({ resumeData }) => {
             endDate: '',
             current: false,
             description: '',
+            achievements: '',
         });
         setIsEditing(true);
         setCurrentExpIndex(null);
@@ -137,17 +139,34 @@ const ExperienceForm = ({ resumeData }) => {
 
                     <div className="sm:col-span-2">
                         <div className="flex justify-between items-center mb-2">
-                            <label className="block text-sm font-medium text-slate-900">Description</label>
+                            <label className="block text-sm font-medium text-slate-900">Description / Responsibilities</label>
                             <button type="button" className="text-xs text-blue-600 flex items-center gap-1 hover:underline">
                                 <Sparkles className="w-3 h-3" /> Improve with AI
                             </button>
                         </div>
                         <textarea
                             name="description"
-                            rows={5}
-                            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 p-3"
+                            rows={4}
+                            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 p-3 mb-4"
                             placeholder="• Developed new features..."
                             value={formData.description}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block text-sm font-medium text-slate-900">Key Achievements</label>
+                            <button type="button" className="text-xs text-blue-600 flex items-center gap-1 hover:underline">
+                                <Sparkles className="w-3 h-3" /> Improve with AI
+                            </button>
+                        </div>
+                        <textarea
+                            name="achievements"
+                            rows={3}
+                            className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 p-3"
+                            placeholder="• Increased conversion by 20%..."
+                            value={formData.achievements}
                             onChange={handleChange}
                         />
                     </div>
