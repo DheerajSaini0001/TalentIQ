@@ -47,24 +47,24 @@ const Login = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="w-full max-w-md space-y-8 bg-white p-8 shadow-xl rounded-xl">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-300">
+            <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 shadow-xl rounded-xl border border-slate-200 dark:border-slate-800 transition-colors duration-300">
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
                         TalentIQ
                     </h1>
-                    <h2 className="mt-4 text-2xl font-bold tracking-tight text-slate-900">
+                    <h2 className="mt-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
                         Sign in to your account
                     </h2>
-                    <p className="mt-2 text-sm text-slate-600">
+                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                         Or{' '}
-                        <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                        <Link to="/register" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                             create a new account
                         </Link>
                     </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-                    <div className="-space-y-px rounded-md shadow-sm">
+                    <div className="-space-y-px rounded-md">
                         <div className='mb-4'>
                             <Input
                                 id="email"

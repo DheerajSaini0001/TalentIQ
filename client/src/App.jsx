@@ -27,7 +27,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Toaster position="top-center" />
-      <div className='font-sans min-h-screen bg-slate-50 text-slate-900 flex flex-col'>
+      <div className='font-sans min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 flex flex-col transition-colors duration-300'>
         <Navbar />
         <main className="flex-grow">
           <Routes>

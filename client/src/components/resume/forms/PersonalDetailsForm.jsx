@@ -35,7 +35,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
         <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium leading-6 text-slate-900">Full Name</label>
+                    <label htmlFor="fullName" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">Full Name</label>
                     <div className="mt-2">
                         <Input
                             type="text"
@@ -49,7 +49,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div>
-                    <label htmlFor="jobTitle" className="block text-sm font-medium leading-6 text-slate-900">Professional Title</label>
+                    <label htmlFor="jobTitle" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">Professional Title</label>
                     <div className="mt-2">
                         <Input
                             type="text"
@@ -63,7 +63,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-900">Email Address</label>
+                    <label htmlFor="email" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">Email Address</label>
                     <div className="mt-2">
                         <Input
                             type="email"
@@ -77,7 +77,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium leading-6 text-slate-900">Phone Number</label>
+                    <label htmlFor="phone" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">Phone Number</label>
                     <div className="mt-2">
                         <Input
                             type="tel"
@@ -91,7 +91,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div className="sm:col-span-2">
-                    <label htmlFor="address" className="block text-sm font-medium leading-6 text-slate-900">City, Country</label>
+                    <label htmlFor="address" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">City, Country</label>
                     <div className="mt-2">
                         <Input
                             type="text"
@@ -105,7 +105,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div>
-                    <label htmlFor="linkedin" className="block text-sm font-medium leading-6 text-slate-900">LinkedIn URL</label>
+                    <label htmlFor="linkedin" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">LinkedIn URL</label>
                     <div className="mt-2">
                         <Input
                             type="url"
@@ -119,7 +119,7 @@ const PersonalDetailsForm = ({ resumeData }) => {
                 </div>
 
                 <div>
-                    <label htmlFor="website" className="block text-sm font-medium leading-6 text-slate-900">Portfolio / Website</label>
+                    <label htmlFor="website" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-100">Portfolio / Website</label>
                     <div className="mt-2">
                         <Input
                             type="url"

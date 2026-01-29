@@ -1,94 +1,167 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, Code2 } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 const Footer = () => {
+    const { darkmode } = useTheme();
+
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
-        <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <footer
+            className={`relative transition-all duration-500 border-t backdrop-blur-lg
+            ${darkmode
+                    ? "bg-slate-950/90 border-slate-800 text-slate-400"
+                    : "bg-white border-slate-200 text-slate-600 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]"
+                }`}
+        >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-                    {/* Brand & Tagline */}
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">F</span>
+                {/* TOP GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
+
+                    {/* BRAND */}
+                    <div className="space-y-6">
+                        <Link
+                            to="/"
+                            onClick={scrollToTop}
+                            className="flex items-center gap-3 group"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                                <span className="text-white font-black text-xl">T</span>
                             </div>
-                            <h2 className="text-2xl font-bold text-white tracking-tight">TalentIQ</h2>
-                        </div>
-                        <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
-                            The resume builder powered by AI.
+                            <h2  className={`text-2xl font-extrabold tracking-tight font-bold uppercase tracking-widest  ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
+                           
+                                TalentIQ
+                            </h2>
+                        </Link>
+
+                        <p className="text-sm leading-relaxed font-medium max-w-xs">
+                            Empowering your career journey with AI-driven precision.
+                            Craft resumes that recruiters actually notice.
                         </p>
                     </div>
 
-                    {/* Product Links */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Product</h3>
-                        <ul className="space-y-2">
-                            <li><Link to="/features" onClick={scrollToTop} className="hover:text-blue-400 transition-colors duration-200">Features</Link></li>
-                            <li><Link to="/pricing" onClick={scrollToTop} className="hover:text-blue-400 transition-colors duration-200">Pricing</Link></li>
-                            <li><Link to="/demo" onClick={scrollToTop} className="hover:text-blue-400 transition-colors duration-200">Live Demo</Link></li>
+                    {/* PRODUCT */}
+                    <div >
+                        <h3 className={`text-xs font-bold uppercase tracking-widest mb-6 ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
+                            Product
+                        </h3>
+                        <ul className="space-y-4 text-sm font-semibold">
+                            {["Features", "Pricing", "Live Demo"].map((item) => (
+                                <li key={item}>
+                                    <Link
+                                        to={`/${item.toLowerCase().replace(" ", "")}`}
+                                        onClick={scrollToTop}
+                                        className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    >
+                                        {item}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Company Links */}
+                    {/* COMPANY */}
                     <div>
-                        <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h3>
-                        <ul className="space-y-2">
-                            <li><Link to="/about" onClick={scrollToTop} className="hover:text-blue-400 transition-colors duration-200">About Us</Link></li>
-                            <li><Link to="/contact" onClick={scrollToTop} className="hover:text-blue-400 transition-colors duration-200">Contact</Link></li>
-                            <li className="pt-2">
-                                <div className="flex items-start gap-2 text-slate-400">
-                                    <Code2 className="w-4 h-4 mt-1 text-blue-500" />
+                        <h3 className={`text-xs font-bold uppercase tracking-widest mb-6 ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
+                            Company
+                        </h3>
+                        <ul className="space-y-4 text-sm font-semibold">
+                            <li>
+                                <Link to="/about" onClick={scrollToTop} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    About Us
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/contact" onClick={scrollToTop} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    Contact
+                                </Link>
+                            </li>
+
+                            {/* DEV CARD */}
+                            <li className="pt-3">
+                                <div className="flex items-center gap-3 p-3 rounded-xl border
+                                bg-white/60 dark:bg-slate-800/50
+                                border-slate-200 dark:border-slate-700 backdrop-blur">
+                                    <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center">
+                                        <Code2 className="w-4 h-4 text-blue-600" />
+                                    </div>
                                     <div>
-                                        <span className="text-xs uppercase tracking-wider block mb-0.5">Developer</span>
-                                        <span className="text-white font-medium">Dheeraj Saini</span>
+                                        <span className="block text-[10px] uppercase tracking-widest text-slate-500">
+                                            Developer
+                                        </span>
+                                        <span className="text-xs font-bold text-slate-900 dark:text-slate-200">
+                                            Dheeraj Saini
+                                        </span>
                                     </div>
                                 </div>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Contact & Legal */}
+                    {/* CONTACT */}
                     <div>
-                        <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Contact</h3>
-                        <ul className="space-y-3 mb-6">
-                            <li className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-blue-500 shrink-0">
+                        <h3 className={`text-xs font-bold uppercase tracking-widest mb-6 ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
+                            Contact
+                        </h3>
+                        <ul className="space-y-4">
+                            <li className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
                                     <Mail className="w-4 h-4" />
                                 </div>
-                                <a href="mailto:dheerajsaini131652@gmail.com" className="hover:text-white transition-colors text-sm break-all">dheerajsaini131652@gmail.com</a>
+                                <a
+                                    href="mailto:dheerajsaini131652@gmail.com"
+                                    className="text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors break-all"
+                                >
+                                    dheerajsaini131652@gmail.com
+                                </a>
                             </li>
-                            <li className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-blue-500 shrink-0">
+
+                            <li className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
                                     <Phone className="w-4 h-4" />
                                 </div>
-                                <a href="tel:+916375131652" className="hover:text-white transition-colors text-sm">+91 63751 31652</a>
+                                <a
+                                    href="tel:+916375131652"
+                                    className="text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors"
+                                >
+                                    +91 63751 31652
+                                </a>
                             </li>
                         </ul>
-
-                        <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Legal</h3>
-                        <ul className="space-y-1 text-sm">
-                            <li><Link to="/privacy" onClick={scrollToTop} className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-                            <li><Link to="/terms" onClick={scrollToTop} className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-                        </ul>
                     </div>
-
                 </div>
 
-                <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-                    <p>© 2026 TalentIQ.</p>
-                    <p className="mt-2 md:mt-0 flex items-center gap-1">
-                        Developed by <span className="text-slate-300 font-medium hover:text-blue-400 cursor-pointer transition-colors">Dheeraj Saini</span>
-                    </p>
+                {/* BOTTOM BAR */}
+                <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-semibold text-slate-500">
+                    <p>© 2026 TalentIQ. All rights reserved.</p>
+
+                    <div className="flex items-center gap-6">
+                        <Link to="/privacy" onClick={scrollToTop} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                            Privacy
+                        </Link>
+                        <Link to="/terms" onClick={scrollToTop} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                            Terms
+                        </Link>
+                        <span>
+                            Built by{" "}
+                            <span
+                                className={`cursor-pointer transition-colors font-bold
+                                ${darkmode
+                                        ? "text-slate-400 hover:text-yellow-400"
+                                        : "text-slate-600 hover:text-blue-600"
+                                    }`}
+                            >
+                                Dheeraj Saini
+                            </span>
+                        </span>
+                    </div>
                 </div>
+
             </div>
         </footer>
     );
