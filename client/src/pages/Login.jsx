@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../store/auth.store';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -16,6 +16,9 @@ const Login = () => {
 
     const { email, password } = formData;
 
+    const location = useLocation(); // Add hook
+    const from = location.state?.from?.pathname || '/dashboard';
+
     useEffect(() => {
         if (isError) {
             // toast.error(message);
@@ -23,13 +26,13 @@ const Login = () => {
         }
 
         if (isSuccess || user) {
-            navigate('/dashboard');
+            navigate(from, { replace: true });
         }
 
         return () => {
             reset();
         };
-    }, [user, isError, isSuccess, message, navigate, reset]);
+    }, [user, isError, isSuccess, message, navigate, reset, from]);
 
     const onChange = (e) => {
         setFormData((prevState) => ({

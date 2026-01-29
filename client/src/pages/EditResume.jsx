@@ -6,6 +6,7 @@ import SectionSidebar from '../components/resume/SectionSidebar';
 import PersonalDetailsForm from '../components/resume/forms/PersonalDetailsForm';
 import SummaryForm from '../components/resume/forms/SummaryForm';
 import ExperienceForm from '../components/resume/forms/ExperienceForm';
+import Template1 from '../components/resume/templates/Template1';
 
 const ResumeEditor = () => {
     const { id } = useParams();
@@ -81,10 +82,9 @@ const ResumeEditor = () => {
 
                 {/* Live Preview (3 cols) - simplified for now, or expandable */}
                 <div className="hidden lg:block lg:col-span-3">
-                    <div className="bg-white shadow-sm border border-slate-200 rounded-lg p-4 sticky top-24 h-[600px] overflow-hidden">
-                        <div className="text-center text-slate-400 mt-20">
-                            <p>Mini Live Preview</p>
-                            <p className='text-xs'>(Click 'Preview' for full size)</p>
+                    <div className="bg-white shadow-sm border border-slate-200 rounded-lg p-2 sticky top-24 h-[800px] overflow-y-auto custom-scrollbar">
+                        <div className="transform scale-[.6] origin-top-left w-[200%] h-[200%]">
+                            <Template1 data={currentResume} />
                         </div>
                     </div>
                 </div>

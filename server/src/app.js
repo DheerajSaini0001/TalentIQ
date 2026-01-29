@@ -11,10 +11,12 @@ app.use(cors());
 import authRoutes from './routes/auth.routes.js';
 import resumeRoutes from './routes/resume.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

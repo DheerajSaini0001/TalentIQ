@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 
 import CreateResume from './pages/CreateResume';
+import ResumePreview from './pages/ResumePreview';
 import EditResume from './pages/EditResume';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -44,10 +45,15 @@ function App() {
               <Route path="/terms" element={<TermsOfService />} />
             </>
 
-            {/* Previously Protected Routes - Now Public */}
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Public Resume Routes */}
             <Route path="/create-resume" element={<CreateResume />} />
-            <Route path="/resume/:id/edit" element={<EditResume />} />
+            <Route path="/resume/preview" element={<ResumePreview />} />
+
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/resume/:id/edit" element={<EditResume />} />
+            </Route>
 
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />

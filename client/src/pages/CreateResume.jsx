@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { predefinedSkills } from '../data/skills';
 import Button from '../components/ui/Button';
 import Autocomplete from '../components/ui/Autocomplete';
 import Input from '../components/ui/Input';
 import useResumeStore from '../store/resume.store';
 import uploadService from '../services/upload.service';
-import { Upload, X, Loader2, User, ChevronRight, Check } from 'lucide-react';
+import aiService from '../services/ai.service';
+import { Upload, X, Loader2, User, ChevronRight, Check, Sparkles, Wand2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const STORAGE_KEY = 'create_resume_form_data';
@@ -15,6 +17,15 @@ const CreateResume = () => {
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
     const [step, setStep] = useState(1);
+    const [activeSkillCategory, setActiveSkillCategory] = useState('');
+    const [skillSearchTerm, setSkillSearchTerm] = useState('');
+
+    // AI Writer State
+    const [aiModalOpen, setAiModalOpen] = useState(false);
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [aiResults, setAiResults] = useState([]);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [activeProjectIndex, setActiveProjectIndex] = useState(null);
 
     // Combined form data
     const [formData, setFormData] = useState({
@@ -226,14 +237,52 @@ const CreateResume = () => {
     };
 
     const handleSkillsChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            skills: {
-                ...prev.skills,
-                [name]: value
+        handleNestedChange('skills', e);
+    };
+
+    const handleAIGenerate = async () => {
+        if (!aiPrompt.trim()) return toast.error("Please describe your project first.");
+
+        setAiLoading(true);
+        try {
+            const data = await aiService.generateContent(aiPrompt, 'project_description');
+            if (data.result) {
+                // If result is string (raw text), wrap in array. If array (JSON logic worked), use it.
+                // Depending on the AI response type we requested.
+                // The controller tries to parse JSON, so it might be an array of strings.
+                let results = data.result;
+                if (typeof results === 'string') {
+                    // Try to split manually if it came back as a bulleted string
+                    if (results.includes('\n-') || results.includes('\n•')) {
+                        results = results.split(/\n[•-]/).map(s => s.trim()).filter(s => s);
+                    } else {
+                        results = [results];
+                    }
+                }
+                setAiResults(Array.isArray(results) ? results : [results]);
             }
-        }));
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to generate content. Please try again.");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const applyAIResult = (text) => {
+        const updatedProjects = [...formData.projects];
+        const currentDesc = updatedProjects[activeProjectIndex].description;
+        // Clean the text from bullets if they are already there
+        const cleanText = text.replace(/^[•-]\s*/, '');
+        updatedProjects[activeProjectIndex].description = currentDesc
+            ? currentDesc + "\n• " + cleanText
+            : "• " + cleanText;
+
+        setFormData({ ...formData, projects: updatedProjects });
+        setAiModalOpen(false);
+        setAiPrompt('');
+        setAiResults([]);
+        toast.success("Description added!");
     };
 
     const handleTitleChange = (value) => {
@@ -586,21 +635,187 @@ const CreateResume = () => {
                         <div className="space-y-6 animate-fadeIn">
                             <div className="border-b border-slate-200 pb-2 mb-4">
                                 <h3 className="text-lg font-medium leading-6 text-slate-900">Skills & Expertise</h3>
+                                <p className="text-sm text-slate-500 mt-1">Select a category to add skills, or type manually.</p>
                             </div>
-                            <div className="space-y-6">
-                                <div>
-                                    <h4 className="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-3">Technical Skills</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="md:col-span-2"><Input label="Programming Languages" name="technical" placeholder="e.g. JavaScript, Python" value={formData.skills.technical} onChange={handleSkillsChange} /></div>
-                                        <div className="md:col-span-2"><Input label="Tools & Technologies" name="tools" placeholder="e.g. Git, Docker, AWS" value={formData.skills.tools} onChange={handleSkillsChange} /></div>
-                                        <div className="md:col-span-2"><Input label="Frameworks / Platforms" name="frameworks" placeholder="e.g. React, Next.js" value={formData.skills.frameworks} onChange={handleSkillsChange} /></div>
+
+                            {/* Dropdown & Skill Picker with Search */}
+                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 transition-all">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Explore Skills</label>
+
+                                {/* Search Bar */}
+                                <div className="relative mb-4">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                                        </svg>
                                     </div>
+                                    <input
+                                        type="text"
+                                        className="block w-full rounded-md border-0 py-2.5 pl-10 pr-3 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                                        placeholder="Search for any skill (e.g. Java, AWS, Leadership)..."
+                                        value={skillSearchTerm}
+                                        onChange={(e) => {
+                                            setSkillSearchTerm(e.target.value);
+                                            if (e.target.value) setActiveSkillCategory(''); // Clear category if searching
+                                        }}
+                                    />
                                 </div>
-                                <div>
-                                    <h4 className="text-sm font-semibold text-green-600 uppercase tracking-wide mb-3">Soft Skills</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="md:col-span-2"><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Soft Skills</label><textarea name="soft" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="e.g. Communication, Leadership" value={formData.skills.soft} onChange={handleSkillsChange} /></div>
+
+                                {!skillSearchTerm && (
+                                    <div className="mb-4">
+                                        <select
+                                            className="block w-full rounded-md border-0 py-2.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                                            value={activeSkillCategory}
+                                            onChange={(e) => setActiveSkillCategory(e.target.value)}
+                                        >
+                                            <option value="">-- Or Browse by Category --</option>
+                                            {Object.keys(predefinedSkills).map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
                                     </div>
+                                )}
+
+                                {/* Results Area */}
+                                <div className="bg-white rounded border border-slate-100 max-h-60 overflow-y-auto custom-scrollbar p-1">
+
+                                    {/* Search Mode */}
+                                    {skillSearchTerm ? (
+                                        <div className="p-2 space-y-4">
+                                            {Object.entries(predefinedSkills).map(([cat, skills]) => {
+                                                const matches = skills.filter(s => s.toLowerCase().includes(skillSearchTerm.toLowerCase()));
+                                                if (matches.length === 0) return null;
+                                                return (
+                                                    <div key={cat}>
+                                                        <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 border-b border-slate-100 pb-1">{cat}</h5>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {matches.map(skill => (
+                                                                <button
+                                                                    key={skill}
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        let target = 'technical';
+                                                                        if (cat === 'Programming Languages') target = 'technical';
+                                                                        else if (cat === 'Frameworks & Stack') target = 'frameworks';
+                                                                        else if (cat === 'Tools & Infrastructure') target = 'tools';
+                                                                        else if (cat === 'Soft Skills & Professional Skills') target = 'soft';
+
+                                                                        const currentVal = formData.skills[target];
+                                                                        if (!currentVal.includes(skill)) {
+                                                                            const newVal = currentVal ? `${currentVal}, ${skill}` : skill;
+                                                                            setFormData(prev => ({
+                                                                                ...prev,
+                                                                                skills: { ...prev.skills, [target]: newVal }
+                                                                            }));
+                                                                            toast.success(`Added ${skill}`);
+                                                                        }
+                                                                        setSkillSearchTerm(''); // Optional: clear search after adding? Maybe not.
+                                                                    }}
+                                                                    className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                                                                >
+                                                                    + <span dangerouslySetInnerHTML={{ __html: skill.replace(new RegExp(`(${skillSearchTerm})`, 'gi'), '<b>$1</b>') }} />
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {Object.values(predefinedSkills).flat().filter(s => s.toLowerCase().includes(skillSearchTerm.toLowerCase())).length === 0 && (
+                                                <p className="text-sm text-slate-500 text-center py-4">No skills found matching "{skillSearchTerm}". You can type it manually below.</p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        // Category Browse Mode
+                                        activeSkillCategory && predefinedSkills[activeSkillCategory] ? (
+                                            <div className="p-3 flex flex-wrap gap-2">
+                                                {predefinedSkills[activeSkillCategory].map(skill => (
+                                                    <button
+                                                        key={skill}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            let target = 'technical';
+                                                            if (activeSkillCategory === 'Programming Languages') target = 'technical';
+                                                            else if (activeSkillCategory === 'Frameworks & Stack') target = 'frameworks';
+                                                            else if (activeSkillCategory === 'Tools & Infrastructure') target = 'tools';
+                                                            else if (activeSkillCategory === 'Soft Skills & Professional Skills') target = 'soft';
+
+                                                            const currentVal = formData.skills[target];
+                                                            if (!currentVal.includes(skill)) {
+                                                                const newVal = currentVal ? `${currentVal}, ${skill}` : skill;
+                                                                setFormData(prev => ({
+                                                                    ...prev,
+                                                                    skills: { ...prev.skills, [target]: newVal }
+                                                                }));
+                                                            }
+                                                        }}
+                                                        className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                                                    >
+                                                        + {skill}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="p-8 text-center text-slate-400 text-sm">
+                                                Start typing to search or select a category above.
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-slate-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500"></div> Technical & Languages
+                                    </h4>
+                                    <Input
+                                        label="Programming Languages"
+                                        name="technical"
+                                        placeholder="e.g. Java, Python, C++"
+                                        value={formData.skills.technical}
+                                        onChange={handleSkillsChange}
+                                        helperText="Core languages and technical competencies"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-slate-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-purple-500"></div> Frameworks & Stack
+                                    </h4>
+                                    <Input
+                                        label="Frameworks / Platforms"
+                                        name="frameworks"
+                                        placeholder="e.g. React, Spring Boot, Django"
+                                        value={formData.skills.frameworks}
+                                        onChange={handleSkillsChange}
+                                        helperText="Web technologies, frameworks and libraries"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-slate-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-orange-500"></div> Tools & Infrastructure
+                                    </h4>
+                                    <Input
+                                        label="Tools & Technologies"
+                                        name="tools"
+                                        placeholder="e.g. Git, Docker, Kubernetes, AWS"
+                                        value={formData.skills.tools}
+                                        onChange={handleSkillsChange}
+                                        helperText="DevOps, Cloud, Databases, and other tools"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-slate-800 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-green-500"></div> Soft Skills
+                                    </h4>
+                                    <label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Interpersonal Skills</label>
+                                    <textarea
+                                        name="soft"
+                                        rows={3}
+                                        className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+                                        placeholder="e.g. Communication, Leadership, Teamwork"
+                                        value={formData.skills.soft}
+                                        onChange={handleSkillsChange}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -626,7 +841,22 @@ const CreateResume = () => {
                                             <Input label="Technologies Used" name="technologies" placeholder="e.g. MERN Stack, Redux" value={proj.technologies} onChange={(e) => handleArrayChange('projects', index, e)} />
                                             <Input label="Your Role" name="role" placeholder="e.g. Frontend Developer" value={proj.role} onChange={(e) => handleArrayChange('projects', index, e)} />
                                             <Input label="Project Link" name="link" placeholder="github.com/myproject" value={proj.link} onChange={(e) => handleArrayChange('projects', index, e)} />
-                                            <div className="md:col-span-2"><label className="block text-sm font-medium leading-6 text-slate-900 mb-2">Description</label><textarea name="description" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="Brief description of what you built..." value={proj.description} onChange={(e) => handleArrayChange('projects', index, e)} /></div>
+                                            <div className="md:col-span-2">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <label className="block text-sm font-medium leading-6 text-slate-900">Description</label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setActiveProjectIndex(index);
+                                                            setAiModalOpen(true);
+                                                        }}
+                                                        className="text-xs flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium px-2 py-1 rounded bg-purple-50 hover:bg-purple-100 transition-colors"
+                                                    >
+                                                        <Sparkles className="w-3 h-3" /> AI Write
+                                                    </button>
+                                                </div>
+                                                <textarea name="description" rows={3} className="block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 sm:text-sm" placeholder="Brief description of what you built..." value={proj.description} onChange={(e) => handleArrayChange('projects', index, e)} />
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -760,16 +990,103 @@ const CreateResume = () => {
                         <Button type="button" variant="ghost" onClick={handleBack}>
                             {step === 1 ? 'Cancel' : 'Back'}
                         </Button>
-                        <Button type="button" onClick={step < 6 ? handleNextPhase : handleCreate} isLoading={isLoading} className="px-8 flex items-center gap-2">
+                        <Button type="button" onClick={step < 6 ? handleNextPhase : () => navigate('/resume/preview')} isLoading={isLoading} className="px-8 flex items-center gap-2">
                             {step < 6 ? (
                                 <>Next Phase <ChevronRight className="w-4 h-4" /></>
                             ) : (
-                                <>Create Resume <Check className="w-4 h-4" /></>
+                                <>Preview Resume <Check className="w-4 h-4" /></>
                             )}
                         </Button>
                     </div>
                 </form>
             </div>
+
+            {/* AI Writer Modal */}
+            {aiModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-purple-50">
+                            <h3 className="text-lg font-semibold text-purple-900 flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 text-purple-600" />
+                                AI Project Describer
+                            </h3>
+                            <button onClick={() => setAiModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                            {!aiResults.length && (
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Describe your project briefly (e.g. "E-commerce app with React and Stripe")
+                                    </label>
+                                    <textarea
+                                        className="w-full rounded-md border-slate-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 min-h-[100px] text-sm"
+                                        placeholder="I built a..."
+                                        value={aiPrompt}
+                                        onChange={(e) => setAiPrompt(e.target.value)}
+                                        autoFocus
+                                    />
+                                    <p className="text-xs text-slate-500 mt-2">
+                                        The AI will generate professional bullet points for your resume.
+                                    </p>
+                                </div>
+                            )}
+
+                            {aiLoading && (
+                                <div className="flex flex-col items-center justify-center py-8 text-slate-500">
+                                    <Loader2 className="w-8 h-8 animate-spin text-purple-600 mb-2" />
+                                    <span className="text-sm font-medium">Generating impactful descriptions...</span>
+                                </div>
+                            )}
+
+                            {aiResults.length > 0 && !aiLoading && (
+                                <div className="space-y-3">
+                                    <h4 className="text-sm font-medium text-slate-700">Select the best option:</h4>
+                                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                        {aiResults.map((res, idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => applyAIResult(res)}
+                                                className="p-3 rounded border border-slate-200 hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-all group"
+                                            >
+                                                <div className="flex gap-3">
+                                                    <div className="mt-0.5 min-w-[20px]">
+                                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-100 text-purple-600 text-xs font-bold group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                                            {idx + 1}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-slate-700 leading-relaxed">{res.replace(/^[•-]\s*/, '')}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => setAiResults([])}
+                                        className="text-xs text-slate-500 hover:text-purple-600 underline mt-2"
+                                    >
+                                        Try a different prompt
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {!aiResults.length && !aiLoading && (
+                            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                <Button variant="ghost" onClick={() => setAiModalOpen(false)}>Cancel</Button>
+                                <button
+                                    onClick={handleAIGenerate}
+                                    className="inline-flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors shadow-sm shadow-purple-200"
+                                >
+                                    <Wand2 className="w-4 h-4 mr-2" />
+                                    Generate
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
