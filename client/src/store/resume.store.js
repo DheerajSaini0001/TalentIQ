@@ -8,10 +8,10 @@ const useResumeStore = create((set) => ({
     isError: false,
     message: '',
 
-    createResume: async (title) => {
+    createResume: async (resumeData) => {
         set({ isLoading: true, isError: false });
         try {
-            const data = await resumeService.createResume(title);
+            const data = await resumeService.createResume(resumeData);
             set((state) => ({
                 resumes: [data, ...state.resumes],
                 isLoading: false,

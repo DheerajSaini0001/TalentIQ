@@ -20,6 +20,7 @@ const resumeSchema = new mongoose.Schema(
             address: String, // City, Country
             linkedin: String,
             website: String, // Portfolio / GitHub
+            photo: String,
         },
         // 2️⃣ Professional Summary
         summary: {
@@ -31,10 +32,12 @@ const resumeSchema = new mongoose.Schema(
                 jobTitle: String,
                 company: String,
                 location: String,
+                type: String, // Full-time / Internship / Freelance
                 startDate: String,
                 endDate: String,
                 current: Boolean,
-                description: String, // Bullets
+                description: String, // Bullets or Key Responsibilities
+                achievements: String, // Specific achievements
             },
         ],
         // 4️⃣ Education
@@ -46,6 +49,7 @@ const resumeSchema = new mongoose.Schema(
                 startYear: String,
                 endYear: String,
                 grade: String,
+                relevantCoursework: String, // Comma separated
             },
         ],
         // 5️⃣ Skills
@@ -84,6 +88,14 @@ const resumeSchema = new mongoose.Schema(
             }
         ],
         // 9️⃣ Additional Sections
+        internships: [
+            {
+                company: String,
+                role: String,
+                duration: String,
+                description: String, // Key Learnings
+            }
+        ],
         languages: [
             {
                 language: String,
@@ -91,6 +103,24 @@ const resumeSchema = new mongoose.Schema(
             },
         ],
         interests: [String],
+
+        // 1️⃣1️⃣ Extra Sections
+        volunteering: [
+            {
+                organization: String,
+                role: String,
+                description: String,
+                date: String,
+            }
+        ],
+        publications: [
+            {
+                title: String,
+                link: String,
+                description: String,
+                date: String,
+            }
+        ],
         // 🔟 Resume Preferences & Meta
         preferences: {
             targetRole: String,
@@ -105,6 +135,14 @@ const resumeSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        // Inputs for AI Summary Generation
+        summaryInputs: {
+            yearsOfExperience: String,
+            currentStatus: String, // Student / Fresher / Professional
+            industry: String,
+            keyStrengths: [String],
+            careerGoal: String,
+        }
     },
     {
         timestamps: true,

@@ -1,7 +1,7 @@
 import api from './api';
 
-const createResume = async (title) => {
-    const response = await api.post('/resume', { title });
+const createResume = async (resumeData) => {
+    const response = await api.post('/resume', resumeData);
     return response.data;
 };
 

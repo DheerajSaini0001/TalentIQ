@@ -5,14 +5,37 @@ import Resume from '../models/Resume.model.js';
 // @access  Private
 export const createResume = async (req, res) => {
     try {
-        const { title } = req.body;
+        const {
+            title, personalInfo, summaryInputs, experience, education, skills,
+            projects, certifications, achievements,
+            internships, languages, interests, volunteering, publications
+        } = req.body;
+
         const resume = await Resume.create({
             userId: req.user._id,
             title: title || 'Untitled Resume',
             personalInfo: {
-                fullName: req.user.name,
-                email: req.user.email,
-            }
+                fullName: personalInfo?.fullName || req.user.name,
+                email: personalInfo?.email || req.user.email,
+                phone: personalInfo?.phone || '',
+                jobTitle: personalInfo?.jobTitle || '',
+                address: personalInfo?.address || '',
+                linkedin: personalInfo?.linkedin || '',
+                website: personalInfo?.website || '',
+                photo: personalInfo?.photo || '',
+            },
+            summaryInputs: summaryInputs || {},
+            experience: experience || [],
+            education: education || [],
+            skills: skills || [],
+            projects: projects || [],
+            certifications: certifications || [],
+            achievements: achievements || [],
+            internships: internships || [],
+            languages: languages || [],
+            interests: interests || [],
+            volunteering: volunteering || [],
+            publications: publications || []
         });
         res.status(201).json(resume);
     } catch (error) {
