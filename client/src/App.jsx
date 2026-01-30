@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import LoginOTP from './pages/LoginOTP';
 import Register from './pages/Register';
 import Features from './pages/Features';
 import Pricing from './pages/Pricing';
@@ -35,6 +36,7 @@ function App() {
             <>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/login-otp" element={<LoginOTP />} />
               <Route path="/register" element={<Register />} />
               <Route path="/features" element={<Features />} />
               <Route path="/pricing" element={<Pricing />} />
