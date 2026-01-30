@@ -13,7 +13,10 @@ export const generateContent = async (req, res) => {
         }
 
         let systemPrompt = "";
+        let isArrayResponse = false;
+
         if (type === 'project_description') {
+            isArrayResponse = true;
             systemPrompt = `You are an expert resume writer. Generate exactly 3 professional, impactful bullet points for this project.
 
 Rules:
@@ -27,6 +30,11 @@ Rules:
 Example format: ["Built a full-stack e-commerce platform using MERN stack with 10,000+ monthly users", "Implemented secure payment gateway integration with Stripe and PayPal", "Optimized database queries reducing load time by 40%"]
 
 Project: ${prompt}`;
+        } else if (type === 'summary') {
+            isArrayResponse = false;
+            systemPrompt = `You are an expert resume writer. ${prompt}
+
+IMPORTANT: Return ONLY the professional summary text. No markdown, no quotes, no explanations - just the summary itself.`;
         } else {
             systemPrompt = prompt;
         }
@@ -58,7 +66,14 @@ Project: ${prompt}`;
         if (!response.ok) {
             console.error('Gemini API Error:', data);
 
-            // Fallback responses if API fails
+            // Fallback responses based on type
+            if (type === 'summary') {
+                const summaryFallback = "Experienced professional with a proven track record of delivering high-quality results. Skilled in problem-solving, collaboration, and driving innovation. Passionate about leveraging technology to create impactful solutions and enhance user experiences.";
+                console.log("Using summary fallback response");
+                return res.status(200).json({ content: summaryFallback });
+            }
+
+            // Project description fallbacks
             const fallbacks = [
                 [
                     "Developed a full-stack web application using modern technologies and best practices",
@@ -78,7 +93,7 @@ Project: ${prompt}`;
             ];
 
             const randomFallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-            console.log("Using fallback response");
+            console.log("Using project fallback response");
 
             return res.status(200).json({ result: randomFallback });
         }
@@ -92,7 +107,17 @@ Project: ${prompt}`;
 
         console.log("Generated text:", generatedText);
 
-        // Parse the response
+        // Handle summary type (return as string)
+        if (type === 'summary') {
+            const cleanedSummary = generatedText
+                .replace(/```/g, '')
+                .replace(/^["']|["']$/g, '')
+                .trim();
+
+            return res.status(200).json({ content: cleanedSummary });
+        }
+
+        // Handle project description type (return as array)
         let result = [];
         try {
             // Try to parse as JSON first
@@ -127,7 +152,13 @@ Project: ${prompt}`;
     } catch (error) {
         console.error('AI Controller Error:', error);
 
-        // Final fallback
+        // Final fallback based on type
+        if (req.body.type === 'summary') {
+            const summaryFallback = "Experienced professional with a proven track record of delivering high-quality results. Skilled in problem-solving, collaboration, and driving innovation. Passionate about leveraging technology to create impactful solutions and enhance user experiences.";
+            return res.status(200).json({ content: summaryFallback });
+        }
+
+        // Project description fallback
         const fallback = [
             "Developed and deployed a full-stack application using industry-standard technologies",
             "Implemented responsive design and intuitive user interface for optimal user experience",
