@@ -28,17 +28,17 @@ const resumeSchema = new mongoose.Schema(
         },
         // 3️⃣ Work Experience
         experience: [
-            {
-                jobTitle: String,
-                company: String,
-                location: String,
-                type: String, // Full-time / Internship / Freelance
-                startDate: String,
-                endDate: String,
-                current: Boolean,
-                description: String, // Bullets or Key Responsibilities
-                achievements: String, // Specific achievements
-            },
+            new mongoose.Schema({
+                jobTitle: { type: String, default: '' },
+                company: { type: String, default: '' },
+                location: { type: String, default: '' },
+                type: { type: String, default: '' },
+                startDate: { type: String, default: '' },
+                endDate: { type: String, default: '' },
+                current: { type: Boolean, default: false },
+                description: { type: String, default: '' },
+                achievements: { type: String, default: '' },
+            }, { _id: false })
         ],
         // 4️⃣ Education
         education: [

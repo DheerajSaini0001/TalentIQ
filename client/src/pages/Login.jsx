@@ -4,6 +4,7 @@ import useAuthStore from '../store/auth.store';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast'; // We might need to add this
+import { useTheme } from '../context/ThemeContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const Login = () => {
 
     const navigate = useNavigate();
     const { login, isLoading, isError, isSuccess, message, user, reset } = useAuthStore();
+    const { darkmode } = useTheme();
 
     const { email, password } = formData;
 
@@ -47,7 +49,7 @@ const Login = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-300">
+        <div className={`flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-500 ${darkmode ? "bg-slate-950" : "bg-slate-50"}`}>
             <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 shadow-xl rounded-xl border border-slate-200 dark:border-slate-800 transition-colors duration-300">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">

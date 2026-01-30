@@ -48,6 +48,7 @@ function App() {
             {/* Public Resume Routes */}
             <Route path="/create-resume" element={<CreateResume />} />
             <Route path="/resume/preview" element={<ResumePreview />} />
+            <Route path="/resume/:id/preview" element={<ResumePreview />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>

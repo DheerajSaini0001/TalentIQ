@@ -13,10 +13,43 @@ const Template3 = ({ data }) => {
         return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(0);
+
+    React.useEffect(() => {
+        setDensity(0);
+    }, [data]);
+
+    React.useLayoutEffect(() => {
+        const checkHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.scrollHeight;
+                if (height > 1130 && density < 4) {
+                    setDensity(prev => prev + 1);
+                }
+            }
+        };
+        checkHeight();
+        window.addEventListener('resize', checkHeight);
+        return () => window.removeEventListener('resize', checkHeight);
+    }, [density, data]);
+
+    const styles = {
+        padding: ['p-8', 'p-6', 'p-5', 'p-4', 'p-4'],
+        spaceY: ['space-y-4', 'space-y-3', 'space-y-3', 'space-y-2', 'space-y-2'],
+        headerSpace: ['pb-4 mb-4', 'pb-4 mb-3', 'pb-3 mb-2', 'pb-2 mb-2', 'pb-1 mb-1'],
+        sectionMb: ['mb-3', 'mb-2', 'mb-2', 'mb-2', 'mb-1'],
+        text: ['text-sm', 'text-sm', 'text-xs', 'text-xs', 'text-[10px]'],
+        gap: ['gap-4', 'gap-4', 'gap-3', 'gap-2', 'gap-2'],
+        leading: ['leading-normal', 'leading-snug', 'leading-snug', 'leading-tight', 'leading-tight']
+    };
+
+    const getStyle = (key) => styles[key][density];
+
     return (
-        <div className="bg-white text-slate-800 w-full min-h-[1100px] shadow-lg p-10 font-sans">
+        <div ref={containerRef} className={`bg-white text-slate-800 w-full min-h-[1100px] shadow-lg font-sans ${getStyle('padding')} ${getStyle('leading')} transition-all duration-300`}>
             {/* Header - Centered & Minimal */}
-            <div className="text-center border-b border-gray-300 pb-6 mb-6">
+            <div className={`text-center border-b border-gray-300 ${getStyle('headerSpace')}`}>
                 <h1 className="text-3xl font-light tracking-wide text-gray-900 uppercase">{personalInfo?.fullName}</h1>
                 <p className="text-md text-gray-500 mt-2 tracking-widest uppercase">{title}</p>
 
@@ -29,7 +62,7 @@ const Template3 = ({ data }) => {
             </div>
 
             {/* Content - Single Column, clean */}
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className={`max-w-3xl mx-auto ${getStyle('spaceY')}`}>
                 {/* Summary */}
                 {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                     <section>
@@ -53,8 +86,8 @@ const Template3 = ({ data }) => {
                 {/* Experience */}
                 {experience.length > 0 && (
                     <section>
-                        <h3 className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 pt-2 border-t border-gray-100">Experience</h3>
-                        <div className="space-y-6">
+                        <h3 className={`text-center text-xs font-bold uppercase tracking-widest text-gray-400 pt-2 border-t border-gray-100 ${getStyle('sectionMb')}`}>Experience</h3>
+                        <div className={`${getStyle('spaceY')}`}>
                             {experience.map((job, i) => (
                                 <div key={i} className="group">
                                     <div className="flex justify-between items-baseline">
@@ -77,8 +110,8 @@ const Template3 = ({ data }) => {
                 {/* Projects */}
                 {projects.length > 0 && (
                     <section>
-                        <h3 className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 pt-2 border-t border-gray-100">Projects</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h3 className={`text-center text-xs font-bold uppercase tracking-widest text-gray-400 pt-2 border-t border-gray-100 ${getStyle('sectionMb')}`}>Projects</h3>
+                        <div className={`grid grid-cols-1 md:grid-cols-2 ${getStyle('gap')}`}>
                             {projects.map((proj, i) => (
                                 <div key={i} className="border border-gray-100 p-4 rounded hover:border-gray-200 transition-colors">
                                     <h4 className="font-medium text-gray-800">{proj.title}</h4>
@@ -94,7 +127,7 @@ const Template3 = ({ data }) => {
                 {/* Internships */}
                 {internships.length > 0 && (
                     <section>
-                        <h3 className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 pt-2 border-t border-gray-100">Internships</h3>
+                        <h3 className={`text-center text-xs font-bold uppercase tracking-widest text-gray-400 pt-2 border-t border-gray-100 ${getStyle('sectionMb')}`}>Internships</h3>
                         <div className="space-y-4">
                             {internships.map((intern, i) => (
                                 <div key={i}>
@@ -112,7 +145,7 @@ const Template3 = ({ data }) => {
 
                 {/* Achievements & Certifications Row */}
                 {(achievements.length > 0 || certifications.length > 0) && (
-                    <div className="grid grid-cols-2 gap-8 pt-4 border-t border-gray-100">
+                    <div className={`grid grid-cols-2 pt-4 border-t border-gray-100 ${getStyle('gap')}`}>
                         {achievements.length > 0 && (
                             <section>
                                 <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Honors</h3>

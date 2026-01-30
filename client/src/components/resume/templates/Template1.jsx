@@ -3,6 +3,30 @@ import React from 'react';
 import { MapPin, Phone, Mail, Linkedin, Globe, ExternalLink, Calendar } from 'lucide-react';
 
 const Template1 = ({ data }) => {
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(0);
+
+    // Reset density when data changes
+    React.useEffect(() => {
+        setDensity(0);
+    }, [data]);
+
+    // Check height and compact if needed
+    React.useLayoutEffect(() => {
+        const checkHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.scrollHeight;
+                // A4 height in pixels approx 1123px.
+                if (height > 1130 && density < 4) {
+                    setDensity(prev => prev + 1);
+                }
+            }
+        };
+        checkHeight();
+        window.addEventListener('resize', checkHeight);
+        return () => window.removeEventListener('resize', checkHeight);
+    }, [density, data]);
+
     if (!data) return null;
 
     const {
@@ -22,6 +46,21 @@ const Template1 = ({ data }) => {
         publications = []
     } = data;
 
+    // Define density styles (Progressively compact)
+    // Levels: 0 (Normal), 1 (Compact), 2 (Dense), 3 (Small), 4 (Minimal)
+    const styles = {
+        padding: ['p-10', 'p-8', 'p-6', 'p-6', 'p-5'],
+        gap: ['gap-6', 'gap-6', 'gap-5', 'gap-4', 'gap-4'],
+        spaceY: ['space-y-5', 'space-y-4', 'space-y-3', 'space-y-3', 'space-y-2'],
+        text: ['text-sm', 'text-sm', 'text-sm', 'text-xs', 'text-xs'],
+        leading: ['leading-normal', 'leading-snug', 'leading-snug', 'leading-tight', 'leading-tight'],
+        headerMb: ['mb-5', 'mb-4', 'mb-3', 'mb-3', 'mb-2'],
+        headerPb: ['pb-5', 'pb-4', 'pb-3', 'pb-3', 'pb-2'],
+        titleSize: ['text-4xl', 'text-3xl', 'text-3xl', 'text-2xl', 'text-2xl']
+    };
+
+    const getStyle = (key) => styles[key][density];
+
     // Helper to format dates (simplified)
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
@@ -31,13 +70,16 @@ const Template1 = ({ data }) => {
     };
 
     return (
-        <div className="bg-white text-slate-900 w-full min-h-[1100px] shadow-lg print:shadow-none p-8 md:p-12 font-sans text-sm leading-relaxed relative">
+        <div
+            ref={containerRef}
+            className={`bg-white text-slate-900 w-full min-h-[1100px] shadow-lg print:shadow-none font-sans relative transition-all duration-300 ${getStyle('padding')} ${getStyle('text')} ${getStyle('leading')}`}
+        >
 
             {/* Header */}
-            <header className="border-b-2 border-slate-900 pb-6 mb-6">
+            <header className={`border-b-2 border-slate-900 ${getStyle('headerPb')} ${getStyle('headerMb')}`}>
                 <div className="flex justify-between items-start gap-6">
                     <div className="flex-1">
-                        <h1 className="text-4xl font-bold uppercase tracking-tight text-slate-900 mb-2">{personalInfo?.fullName || 'Your Name'}</h1>
+                        <h1 className={`${getStyle('titleSize')} font-bold uppercase tracking-tight text-slate-900 mb-2`}>{personalInfo?.fullName || 'Your Name'}</h1>
                         <p className="text-xl text-slate-600 font-medium mb-4">{title || 'Professional Title'}</p>
 
                         <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-slate-500">
@@ -82,10 +124,10 @@ const Template1 = ({ data }) => {
             </header>
 
             {/* Layout Grid */}
-            <div className="grid grid-cols-12 gap-8">
+            <div className={`grid grid-cols-12 ${getStyle('gap')}`}>
 
                 {/* Left Column (Main Content) */}
-                <div className="col-span-8 space-y-6">
+                <div className={`col-span-8 ${getStyle('spaceY')}`}>
 
                     {/* Professional Summary */}
                     {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
@@ -187,7 +229,7 @@ const Template1 = ({ data }) => {
                 </div>
 
                 {/* Right Column (Sidebar Content) */}
-                <div className="col-span-4 space-y-6">
+                <div className={`col-span-4 ${getStyle('spaceY')}`}>
 
                     {/* Education */}
                     {education.length > 0 && (

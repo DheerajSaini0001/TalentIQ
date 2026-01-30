@@ -13,14 +13,49 @@ const Template7 = ({ data }) => {
         return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(0);
+
+    React.useEffect(() => {
+        setDensity(0);
+    }, [data]);
+
+    React.useLayoutEffect(() => {
+        const checkHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.scrollHeight;
+                if (height > 1130 && density < 4) {
+                    setDensity(prev => prev + 1);
+                }
+            }
+        };
+        checkHeight();
+        window.addEventListener('resize', checkHeight);
+        return () => window.removeEventListener('resize', checkHeight);
+    }, [density, data]);
+
+    const styles = {
+        padding: ['p-8', 'p-6', 'p-5', 'p-4', 'p-3'],
+        gap: ['gap-8', 'gap-6', 'gap-5', 'gap-4', 'gap-3'],
+        spaceY: ['space-y-6', 'space-y-5', 'space-y-4', 'space-y-3', 'space-y-2'],
+        headerH: ['h-32', 'h-28', 'h-24', 'h-20', 'h-20'],
+        headerP: ['p-6', 'p-5', 'p-4', 'p-3', 'p-3'],
+        titleSize: ['text-2xl', 'text-2xl', 'text-xl', 'text-xl', 'text-lg'],
+        sectionMb: ['mb-3', 'mb-2', 'mb-2', 'mb-1', 'mb-1'],
+        itemMb: ['mb-4', 'mb-3', 'mb-3', 'mb-2', 'mb-1'],
+        leading: ['leading-normal', 'leading-snug', 'leading-snug', 'leading-tight', 'leading-tight']
+    };
+
+    const getStyle = (key) => styles[key][density];
+
     return (
-        <div className="bg-white text-slate-900 w-full min-h-[1100px] shadow-lg font-sans">
+        <div ref={containerRef} className={`bg-white text-slate-900 w-full min-h-[1100px] shadow-lg font-sans ${getStyle('leading')} transition-all duration-300`}>
             {/* Split Header */}
-            <div className="grid grid-cols-12 h-40">
-                <div className="col-span-5 bg-yellow-400 p-8 flex flex-col justify-center">
-                    <h1 className="text-3xl font-black text-slate-900 leading-tight uppercase">{personalInfo?.fullName}</h1>
+            <div className={`grid grid-cols-12 ${getStyle('headerH')}`}>
+                <div className={`col-span-5 bg-yellow-400 ${getStyle('headerP')} flex flex-col justify-center`}>
+                    <h1 className={`${getStyle('titleSize')} font-black text-slate-900 leading-tight uppercase`}>{personalInfo?.fullName}</h1>
                 </div>
-                <div className="col-span-7 bg-slate-900 p-8 flex flex-col justify-center text-white text-right">
+                <div className={`col-span-7 bg-slate-900 ${getStyle('headerP')} flex flex-col justify-center text-white text-right`}>
                     <div className="text-xl font-bold tracking-wider mb-2 text-yellow-400 uppercase">{title}</div>
                     <div className="text-sm space-y-1 text-slate-300">
                         {personalInfo?.email && <div>{personalInfo.email}</div>}
@@ -30,7 +65,7 @@ const Template7 = ({ data }) => {
                 </div>
             </div>
 
-            <div className="p-10 space-y-8">
+            <div className={`${getStyle('padding')} ${getStyle('spaceY')}`}>
                 {/* Skills Bar - Top */}
                 {skills.length > 0 && (
                     <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center border-b-2 border-slate-900 pb-6">
@@ -41,12 +76,12 @@ const Template7 = ({ data }) => {
                 )}
 
                 {/* Two Columns */}
-                <div className="grid grid-cols-12 gap-10">
-                    <div className="col-span-8 space-y-8">
+                <div className={`grid grid-cols-12 ${getStyle('gap')}`}>
+                    <div className={`col-span-8 ${getStyle('spaceY')}`}>
                         {/* Summary */}
                         {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                             <section>
-                                <h3 className="text-xl font-black text-slate-900 uppercase mb-3"><span className="bg-yellow-200 px-1">About Me</span></h3>
+                                <h3 className={`text-xl font-black text-slate-900 uppercase ${getStyle('sectionMb')}`}><span className="bg-yellow-200 px-1">About Me</span></h3>
                                 <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-[10px] font-black uppercase text-slate-500 tracking-widest">
                                     {summaryInputs.yearsOfExperience && <span>{summaryInputs.yearsOfExperience}y Professional</span>}
                                     {summaryInputs.currentStatus && <span>/ {summaryInputs.currentStatus}</span>}
@@ -66,7 +101,7 @@ const Template7 = ({ data }) => {
                         {/* Experience */}
                         {experience.length > 0 && (
                             <section>
-                                <h3 className="text-xl font-black text-slate-900 uppercase mb-4"><span className="bg-yellow-200 px-1">Experience</span></h3>
+                                <h3 className={`text-xl font-black text-slate-900 uppercase ${getStyle('sectionMb')}`}><span className="bg-yellow-200 px-1">Experience</span></h3>
                                 <div className="space-y-6">
                                     {experience.map((job, i) => (
                                         <div key={i} className="pl-4 border-l-4 border-slate-200">
@@ -90,9 +125,9 @@ const Template7 = ({ data }) => {
                         {/* Projects */}
                         {projects.length > 0 && (
                             <section>
-                                <h3 className="text-xl font-black text-slate-900 uppercase mb-5"><span className="bg-yellow-200 px-1">Projects</span></h3>
+                                <h3 className={`text-xl font-black text-slate-900 uppercase ${getStyle('sectionMb')}`}><span className="bg-yellow-200 px-1">Projects</span></h3>
                                 {projects.map((proj, i) => (
-                                    <div key={i} className="mb-6 group">
+                                    <div key={i} className={`${getStyle('itemMb')} group`}>
                                         <div className="flex justify-between items-baseline border-b-2 border-slate-900 pb-1 mb-2">
                                             <h4 className="font-bold text-lg text-slate-800 tracking-tight">{proj.title}</h4>
                                             <span className="text-[10px] font-black uppercase text-slate-400">{proj.technologies}</span>
@@ -107,9 +142,9 @@ const Template7 = ({ data }) => {
                         {/* Internships */}
                         {internships.length > 0 && (
                             <section>
-                                <h3 className="text-xl font-black text-slate-900 uppercase mb-5"><span className="bg-yellow-200 px-1">Internships</span></h3>
+                                <h3 className={`text-xl font-black text-slate-900 uppercase ${getStyle('sectionMb')}`}><span className="bg-yellow-200 px-1">Internships</span></h3>
                                 {internships.map((intern, i) => (
-                                    <div key={i} className="mb-6 pl-4 border-l-4 border-slate-900">
+                                    <div key={i} className={`${getStyle('itemMb')} pl-4 border-l-4 border-slate-900`}>
                                         <h4 className="font-bold text-lg text-slate-800">{intern.role}</h4>
                                         <div className="flex justify-between text-xs font-black text-slate-500 uppercase mb-2">
                                             <span>{intern.company}</span>
@@ -122,11 +157,11 @@ const Template7 = ({ data }) => {
                         )}
                     </div>
 
-                    <div className="col-span-4 space-y-8">
+                    <div className={`col-span-4 ${getStyle('spaceY')}`}>
                         {/* Skills */}
                         {skills.length > 0 && (
                             <section>
-                                <h3 className="text-lg font-black text-slate-900 uppercase mb-4"><span className="bg-slate-200 px-1">Hard Skills</span></h3>
+                                <h3 className={`text-lg font-black text-slate-900 uppercase ${getStyle('sectionMb')}`}><span className="bg-slate-200 px-1">Hard Skills</span></h3>
                                 <div className="flex flex-col gap-2">
                                     {skills.map((s, i) => (
                                         <div key={i} className="flex flex-col">

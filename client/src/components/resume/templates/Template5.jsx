@@ -14,10 +14,44 @@ const Template5 = ({ data }) => {
         return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(0);
+
+    React.useEffect(() => {
+        setDensity(0);
+    }, [data]);
+
+    React.useLayoutEffect(() => {
+        const checkHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.scrollHeight;
+                if (height > 1130 && density < 4) {
+                    setDensity(prev => prev + 1);
+                }
+            }
+        };
+        checkHeight();
+        window.addEventListener('resize', checkHeight);
+        return () => window.removeEventListener('resize', checkHeight);
+    }, [density, data]);
+
+    const styles = {
+        padding: ['p-6', 'p-5', 'p-4', 'p-3', 'p-2'],
+        gap: ['gap-5', 'gap-4', 'gap-3', 'gap-2', 'gap-2'],
+        spaceY: ['space-y-4', 'space-y-3', 'space-y-3', 'space-y-2', 'space-y-1'],
+        text: ['text-sm', 'text-sm', 'text-xs', 'text-xs', 'text-[10px]'],
+        headerP: ['p-6', 'p-5', 'p-4', 'p-3', 'p-3'],
+        sectionMb: ['mb-3', 'mb-2', 'mb-1', 'mb-1', 'mb-0.5'],
+        itemMb: ['mb-3', 'mb-2', 'mb-2', 'mb-1', 'mb-1'],
+        leading: ['leading-normal', 'leading-snug', 'leading-snug', 'leading-tight', 'leading-tight']
+    };
+
+    const getStyle = (key) => styles[key][density];
+
     return (
-        <div className="bg-white text-slate-900 w-full min-h-[1100px] shadow-lg font-mono text-sm">
+        <div ref={containerRef} className={`bg-white text-slate-900 w-full min-h-[1100px] shadow-lg font-mono ${getStyle('text')} ${getStyle('leading')} transition-all duration-300`}>
             {/* Header - Terminal Style */}
-            <div className="bg-slate-900 text-green-400 p-8">
+            <div className={`bg-slate-900 text-green-400 ${getStyle('headerP')}`}>
                 <div className="font-bold text-lg mb-2 flex items-center gap-2"><Terminal size={18} /> ~/profile/candidate</div>
                 <h1 className="text-4xl font-bold text-white mb-2 ml-4">&gt; {personalInfo?.fullName}</h1>
                 <p className="text-xl text-green-500 ml-4 mb-4">  {title || 'Developer'}</p>
@@ -29,9 +63,9 @@ const Template5 = ({ data }) => {
                 </div>
             </div>
 
-            <div className="p-8 grid grid-cols-12 gap-6">
+            <div className={`${getStyle('padding')} grid grid-cols-12 ${getStyle('gap')}`}>
                 {/* Main Column */}
-                <div className="col-span-8 space-y-6">
+                <div className={`col-span-8 ${getStyle('spaceY')}`}>
                     {/* Summary */}
                     {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                         <div className="bg-slate-50 p-4 border-l-4 border-green-500 rounded-r space-y-3">
@@ -54,7 +88,7 @@ const Template5 = ({ data }) => {
                     {/* Projects (Highlighted for Tech) */}
                     {projects.length > 0 && (
                         <section>
-                            <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3">// Projects</h3>
+                            <h3 className={`text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 ${getStyle('sectionMb')}`}>// Projects</h3>
                             <div className="space-y-4">
                                 {projects.map((proj, i) => (
                                     <div key={i}>
@@ -73,7 +107,7 @@ const Template5 = ({ data }) => {
                     {/* Experience */}
                     {experience.length > 0 && (
                         <section>
-                            <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3">// Experience</h3>
+                            <h3 className={`text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 ${getStyle('sectionMb')}`}>// Experience</h3>
                             <div className="space-y-6">
                                 {experience.map((job, i) => (
                                     <div key={i} className="pl-4 border-l border-slate-200">
@@ -97,7 +131,7 @@ const Template5 = ({ data }) => {
                     {/* Internships */}
                     {internships.length > 0 && (
                         <section>
-                            <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3">// Internships</h3>
+                            <h3 className={`text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 ${getStyle('sectionMb')}`}>// Internships</h3>
                             <div className="space-y-4">
                                 {internships.map((intern, i) => (
                                     <div key={i} className="pl-4 border-l border-slate-200">
@@ -115,7 +149,7 @@ const Template5 = ({ data }) => {
                 </div>
 
                 {/* Side Column */}
-                <div className="col-span-4 space-y-6">
+                <div className={`col-span-4 ${getStyle('spaceY')}`}>
                     {/* Skills */}
                     {skills.length > 0 && (
                         <section className="bg-slate-50 p-4 rounded">

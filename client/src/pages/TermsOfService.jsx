@@ -1,28 +1,32 @@
 import React from 'react';
 
+import { useTheme } from '../context/ThemeContext';
+
 const TermsOfService = () => {
+    const { darkmode } = useTheme();
+
     return (
-        <div className="bg-slate-50 min-h-screen pt-20 pb-16">
+        <div className={`min-h-screen pt-20 pb-16 transition-colors duration-500 ${darkmode ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"}`}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div className="mb-12">
-                    <h1 className="text-3xl font-extrabold text-slate-900 sm:text-4xl tracking-tight mb-4">
+                    <h1 className={`text-3xl font-extrabold sm:text-4xl tracking-tight mb-4 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>
                         Terms of Service
                     </h1>
-                    <p className="text-slate-500">Last updated: January 29, 2026</p>
+                    <p className={`${darkmode ? "text-slate-400" : "text-slate-500"}`}>Last updated: January 29, 2026</p>
                 </div>
 
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-8 text-slate-700 leading-relaxed text-sm md:text-base">
+                <div className={`p-8 rounded-2xl shadow-sm border space-y-8 leading-relaxed text-sm md:text-base ${darkmode ? "bg-slate-900 border-slate-800 text-slate-300" : "bg-white border-slate-100 text-slate-700"}`}>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">1. Acceptance of Terms</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>1. Acceptance of Terms</h2>
                         <p>
                             By accessing or using TalentIQ, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions, then you may not access the Service or use any services.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">2. Description of Service</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>2. Description of Service</h2>
                         <p>
                             TalentIQ provides AI-powered tools to create, edit, download, and manage professional resumes and related career documents. Our services include:
                         </p>
@@ -35,14 +39,14 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">3. Eligibility</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>3. Eligibility</h2>
                         <p>
                             You must be at least 13 years old to use our Service. By using TalentIQ, you represent and warrant that you meet this age requirement.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">4. User Accounts</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>4. User Accounts</h2>
                         <p>
                             To access certain features, you may be required to register for an account. You agree to:
                         </p>
@@ -57,7 +61,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">5. User Data & Content Ownership</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>5. User Data & Content Ownership</h2>
                         <p>
                             <strong>You retain full ownership of the content you create.</strong> We do not claim ownership over your resumes or personal data entered into the application.
                         </p>
@@ -67,7 +71,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">6. AI-Generated Content Disclaimer</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>6. AI-Generated Content Disclaimer</h2>
                         <p>
                             Our Service utilizes Artificial Intelligence (AI) to provide content suggestions. Please be aware that:
                         </p>
@@ -79,7 +83,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">7. Prohibited Use</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>7. Prohibited Use</h2>
                         <p>
                             You agree not to engage in any of the following prohibited activities:
                         </p>
@@ -92,7 +96,7 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">8. Payments & Subscriptions</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>8. Payments & Subscriptions</h2>
                         <p>
                             Some parts of the Service may be billed on a subscription basis.
                         </p>
@@ -104,49 +108,49 @@ const TermsOfService = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">9. Intellectual Property</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>9. Intellectual Property</h2>
                         <p>
                             The TalentIQ platform, including its design, code, graphics, and AI logic (excluding user-generated content), is the property of TalentIQ and is protected by copyright, trademark, and other intellectual property laws.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">10. Third-Party Services</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>10. Third-Party Services</h2>
                         <p>
                             The Service may contain links to or integrations with third-party websites or services (e.g., payment processors, PDF generators). We are not responsible for the content or practices of any third-party services.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">11. Limitation of Liability</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>11. Limitation of Liability</h2>
                         <p>
                             To the maximum extent permitted by law, TalentIQ shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the Service.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">12. Termination of Service</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>12. Termination of Service</h2>
                         <p>
                             We reserve the right to suspend or terminate your account and access to the Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">13. Changes to Terms</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>13. Changes to Terms</h2>
                         <p>
                             We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">14. Governing Law</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>14. Governing Law</h2>
                         <p>
                             These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions. Any disputes arising from these Terms shall be subject to the exclusive jurisdiction of the courts in India.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-bold text-slate-900 mb-3">15. Contact Us</h2>
+                        <h2 className={`text-xl font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>15. Contact Us</h2>
                         <p>
                             If you have any questions about these Terms, please contact us at:
                             <a href="mailto:dheerajsaini131652@gmail.com" className="text-blue-600 hover:underline ml-1 font-medium">dheerajsaini131652@gmail.com</a>

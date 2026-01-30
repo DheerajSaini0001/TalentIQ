@@ -13,10 +13,44 @@ const Template4 = ({ data }) => {
         return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(0);
+
+    React.useEffect(() => {
+        setDensity(0);
+    }, [data]);
+
+    React.useLayoutEffect(() => {
+        const checkHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.scrollHeight;
+                if (height > 1130 && density < 4) {
+                    setDensity(prev => prev + 1);
+                }
+            }
+        };
+        checkHeight();
+        window.addEventListener('resize', checkHeight);
+        return () => window.removeEventListener('resize', checkHeight);
+    }, [density, data]);
+
+    const styles = {
+        padding: ['p-10', 'p-8', 'p-6', 'p-5', 'p-4'],
+        headerMb: ['mb-6', 'mb-5', 'mb-4', 'mb-3', 'mb-2'],
+        gap: ['gap-5', 'gap-4', 'gap-3', 'gap-2', 'gap-2'],
+        sectionMb: ['mb-3', 'mb-2', 'mb-2', 'mb-1', 'mb-1'],
+        spaceY: ['space-y-4', 'space-y-3', 'space-y-3', 'space-y-2', 'space-y-2'],
+        text: ['text-sm', 'text-sm', 'text-xs', 'text-xs', 'text-[10px]'],
+        itemMb: ['mb-2', 'mb-2', 'mb-1', 'mb-1', 'mb-0'],
+        leading: ['leading-normal', 'leading-snug', 'leading-snug', 'leading-tight', 'leading-tight']
+    };
+
+    const getStyle = (key) => styles[key][density];
+
     return (
-        <div className="bg-white text-slate-900 w-full min-h-[1100px] shadow-lg p-12 font-serif">
+        <div ref={containerRef} className={`bg-white text-slate-900 w-full min-h-[1100px] shadow-lg font-serif ${getStyle('padding')} ${getStyle('leading')} transition-all duration-300`}>
             {/* Header */}
-            <div className="border-b-4 border-slate-800 pb-4 mb-8 flex justify-between items-end">
+            <div className={`border-b-4 border-slate-800 pb-4 flex justify-between items-end ${getStyle('headerMb')}`}>
                 <div>
                     <h1 className="text-4xl font-bold text-slate-900 leading-none">{personalInfo?.fullName}</h1>
                     <p className="text-xl text-slate-600 mt-2 font-sans italic">{title}</p>
@@ -29,11 +63,11 @@ const Template4 = ({ data }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className={`grid grid-cols-1 ${getStyle('gap')}`}>
                 {/* Summary */}
                 {(summaryInputs?.careerGoal || summaryInputs?.keyStrengths?.length > 0) && (
                     <section>
-                        <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-2 pb-1 font-sans text-slate-700">Executive Summary</h3>
+                        <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('sectionMb')}`}>Executive Summary</h3>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2 text-xs font-sans text-slate-500 italic">
                             {summaryInputs.yearsOfExperience && <span>{summaryInputs.yearsOfExperience} Years Experience</span>}
                             {summaryInputs.currentStatus && <span>Status: {summaryInputs.currentStatus}</span>}
@@ -53,8 +87,8 @@ const Template4 = ({ data }) => {
                 {/* Experience */}
                 {experience.length > 0 && (
                     <section>
-                        <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-4 pb-1 font-sans text-slate-700">Professional Experience</h3>
-                        <div className="space-y-5">
+                        <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('sectionMb')}`}>Professional Experience</h3>
+                        <div className={`${getStyle('spaceY')}`}>
                             {experience.map((job, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between font-bold text-md text-slate-800">
@@ -77,9 +111,9 @@ const Template4 = ({ data }) => {
                 {/* Projects */}
                 {projects.length > 0 && (
                     <section>
-                        <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-4 pb-1 font-sans text-slate-700">Key Projects</h3>
+                        <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('sectionMb')}`}>Key Projects</h3>
                         {projects.map((proj, i) => (
-                            <div key={i} className="mb-3">
+                            <div key={i} className={`${getStyle('itemMb')}`}>
                                 <div className="flex justify-between">
                                     <span className="font-bold text-slate-800 text-sm">{proj.title}</span>
                                     <span className="text-xs text-slate-500 font-sans">{proj.technologies}</span>
@@ -91,12 +125,12 @@ const Template4 = ({ data }) => {
                 )}
 
                 {/* Ed & Skills */}
-                <div className="grid grid-cols-2 gap-8">
+                <div className={`grid grid-cols-2 ${getStyle('gap')}`}>
                     {education.length > 0 && (
                         <section>
-                            <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-3 pb-1 font-sans text-slate-700">Education</h3>
+                            <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('itemMb')}`}>Education</h3>
                             {education.map((edu, i) => (
-                                <div key={i} className="mb-2">
+                                <div key={i} className={`${getStyle('itemMb')}`}>
                                     <div className="font-bold text-sm">{edu.school}</div>
                                     <div className="text-sm">{edu.degree}</div>
                                     <div className="text-xs italic text-slate-500">{formatDate(edu.startYear)} - {formatDate(edu.endYear)}</div>
@@ -108,7 +142,7 @@ const Template4 = ({ data }) => {
 
                     {skills.length > 0 && (
                         <section>
-                            <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-3 pb-1 font-sans text-slate-700">Core Competencies</h3>
+                            <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('itemMb')}`}>Core Competencies</h3>
                             <div className="flex flex-wrap gap-2 text-sm text-slate-700">
                                 {skills.map((s, i) => (
                                     <span key={i} className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded text-[11px] font-sans shadow-sm">{s.name}</span>
@@ -120,10 +154,10 @@ const Template4 = ({ data }) => {
 
                 {/* Internships & Achievements Row */}
                 {(internships.length > 0 || achievements.length > 0) && (
-                    <div className="grid grid-cols-12 gap-8">
+                    <div className={`grid grid-cols-12 ${getStyle('gap')}`}>
                         {internships.length > 0 && (
                             <div className="col-span-7">
-                                <h3 className="text-sm font-bold uppercase border-b border-slate-300 mb-3 pb-1 font-sans text-slate-700">Internships</h3>
+                                <h3 className={`text-sm font-bold uppercase border-b border-slate-300 pb-1 font-sans text-slate-700 ${getStyle('itemMb')}`}>Internships</h3>
                                 {internships.map((intern, i) => (
                                     <div key={i} className="mb-3">
                                         <div className="flex justify-between font-bold text-sm text-slate-800">

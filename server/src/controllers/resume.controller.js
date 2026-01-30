@@ -8,8 +8,10 @@ export const createResume = async (req, res) => {
         const {
             title, personalInfo, summaryInputs, experience, education, skills,
             projects, certifications, achievements,
-            internships, languages, interests, volunteering, publications
+            internships, languages, interests, volunteering, publications, preferences
         } = req.body;
+
+        console.log('Received Resume Payload:', JSON.stringify(req.body, null, 2));
 
         const resume = await Resume.create({
             userId: req.user._id,
@@ -35,7 +37,8 @@ export const createResume = async (req, res) => {
             languages: languages || [],
             interests: interests || [],
             volunteering: volunteering || [],
-            publications: publications || []
+            publications: publications || [],
+            preferences: preferences || {}
         });
         res.status(201).json(resume);
     } catch (error) {

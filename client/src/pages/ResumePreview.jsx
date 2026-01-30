@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Template1 from '../components/resume/templates/Template1';
 import Template2 from '../components/resume/templates/Template2';
 import Template3 from '../components/resume/templates/Template3';
@@ -13,70 +13,110 @@ import useAuthStore from '../store/auth.store';
 import useResumeStore from '../store/resume.store';
 import { Download, Save, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTheme } from '../context/ThemeContext';
 
 const ResumePreview = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuthStore();
-    const { createResume, isLoading } = useResumeStore();
+    const { id } = useParams(); // Import useParams
+    const { getResume, currentResume, createResume, updateResume, isLoading, resumes, getResumes } = useResumeStore();
+    const { darkmode } = useTheme();
+
+    // Resize fetch Effect
+    useEffect(() => {
+        if (user && resumes.length === 0) {
+            getResumes();
+        }
+    }, [user, resumes.length, getResumes]);
 
     // Read local data
     const [resumeData, setResumeData] = useState(null);
 
     useEffect(() => {
-        const storedData = localStorage.getItem('create_resume_form_data');
-        if (storedData) {
-            try {
-                setResumeData(JSON.parse(storedData));
-            } catch (e) {
-                console.error("Failed to parse local resume data");
+        if (id) {
+            // Fetch existing resume
+            getResume(id);
+        } else {
+            // Local storage fallback for new creation flow
+            const storedData = localStorage.getItem('create_resume_form_data');
+            if (storedData) {
+                try {
+                    setResumeData(JSON.parse(storedData));
+                } catch (e) {
+                    console.error("Failed to parse local resume data");
+                    navigate('/create-resume');
+                }
+            } else {
+                // If no data and no ID, send back to create
                 navigate('/create-resume');
             }
-        } else {
-            // If no data, send back to create
-            navigate('/create-resume');
         }
-    }, [navigate]);
+    }, [id, navigate, getResume]);
+
+    // Sync currentResume to resumeData when in ID mode
+    useEffect(() => {
+        if (id && currentResume) {
+            setResumeData(currentResume);
+            if (currentResume.preferences?.designStyle) {
+                setSelectedTemplate(currentResume.preferences.designStyle);
+            }
+        }
+    }, [id, currentResume]);
 
     const handleSaveAndDownload = async () => {
-        // Enforce Login
         if (!user) {
-            toast('Please login to save and download your resume.', {
-                icon: '🔒',
-            });
-            // Redirect to login, passing current location to return to
+            toast('Please login to save and download your resume.', { icon: '🔒' });
             navigate('/login', { state: { from: location } });
             return;
         }
 
-        // Validate data availability
         if (!resumeData) return;
 
-        // Call API
         try {
-            // Construct payload from local data (similar to CreateResume's logic)
-            // Ideally CreateResume should have saved the *processed* payload, but it saved raw form state.
-            // We need to re-process it or reuse logic.
-            // For simplicity, let's assume valid structure OR create a shared helper.
-            // Re-implementing simplified processing here for robustness:
+            if (id) {
+                // Updating existing resume
+                await updateResume(id, {
+                    preferences: {
+                        ...resumeData.preferences,
+                        designStyle: selectedTemplate
+                    }
+                });
+                toast.success('Resume updated!');
+                setTimeout(() => window.print(), 500);
+            } else {
+                // Creating NEW resume
+                // Check if duplicate title exists
+                const existingResume = resumes.find(r => r.title === resumeData.title);
 
-            // NOTE: CreateResume saved the RAW formData state, which might need mapping (e.g. arrays vs strings).
-            // Let's check CreateResume.jsx again. It creates 'payload' in handleCreate.
-            // We should ideally move that processing logic to a utility or do it here.
+                let shouldOverwrite = false;
+                if (existingResume) {
+                    shouldOverwrite = window.confirm(`A resume with the title "${resumeData.title}" already exists. Do you want to overwrite it?`);
+                }
 
-            // Better approach: Let's assume CreateResume saves the *FINAL* payload to 'resume_payload' 
-            // OR let's replicate the mapping logic here quickly:
+                if (shouldOverwrite && existingResume) {
+                    // Update existing
+                    await updateResume(existingResume._id, {
+                        ...processPayload(resumeData),
+                        preferences: { designStyle: selectedTemplate }
+                    });
+                    toast.success('Existing resume updated!');
+                    // Redirect to the existing resume's preview ID to keep state consistent
+                    window.history.replaceState(null, '', `/resume/${existingResume._id}/preview`);
+                    setTimeout(() => window.print(), 500);
+                } else {
+                    // Create NEW
+                    const payload = processPayload(resumeData);
+                    if (!payload.preferences) payload.preferences = {};
+                    payload.preferences.designStyle = selectedTemplate;
 
-            // ... Mapping logic (Simplified copy from CreateResume) ...
-            const payload = processPayload(resumeData);
-
-            const newResume = await createResume(payload);
-            if (newResume) {
-                toast.success('Resume saved successfully!');
-                // Navigate to the editor for PDF download
-                navigate(`/resume/${newResume._id}/edit`);
-                // Clear local storag
-                // localStorage.removeItem('create_resume_form_data');
+                    const newResume = await createResume(payload);
+                    if (newResume) {
+                        toast.success('Resume saved successfully!');
+                        window.history.replaceState(null, '', `/resume/${newResume._id}/preview`);
+                        setTimeout(() => window.print(), 500);
+                    }
+                }
             }
         } catch (error) {
             console.error(error);
@@ -189,7 +229,10 @@ const ResumePreview = () => {
             languages: formData.language?.name ? [{ language: formData.language.name, proficiency: formData.language.proficiency }] : [],
             interests: formData.extras?.hobbies ? formData.extras.hobbies.split(',') : [],
             volunteering: formData.extras?.volunteering ? [{ organization: 'Volunteering', description: formData.extras.volunteering }] : [],
-            publications: formData.extras?.publications ? [{ title: formData.extras.publications }] : []
+            publications: formData.extras?.publications ? [{ title: formData.extras.publications }] : [],
+            preferences: {
+                designStyle: selectedTemplate // Save the selected template ID here
+            }
         };
     };
 
@@ -197,7 +240,7 @@ const ResumePreview = () => {
 
     if (!resumeData) return <div className="min-h-screen flex items-center justify-center">Loading preview...</div>;
 
-    const displayData = processPayload(resumeData);
+    const displayData = id ? resumeData : processPayload(resumeData);
 
     const renderTemplate = () => {
         switch (selectedTemplate) {
@@ -224,11 +267,28 @@ const ResumePreview = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col">
-            <header className="bg-white shadow sticky top-0 z-10 px-4 py-3 flex justify-between items-center">
+        <div className={`min-h-screen flex flex-col transition-colors duration-500 ${darkmode ? "bg-slate-950" : "bg-slate-100"}`}>
+            <style>{`
+                @media print {
+                    @page { margin: 0; size: auto; }
+                    body { background: white; margin: 0; padding: 0; }
+                    header, nav, .sidebar-panel, .no-print { display: none !important; }
+                    .resume-container { 
+                        transform: none !important; 
+                        width: 100% !important; 
+                        max-width: 100% !important; 
+                        margin: 0 !important; 
+                        padding: 0 !important;
+                        box-shadow: none !important;
+                    }
+                    main { display: block !important; overflow: visible !important; }
+                    .preview-scroll-area { overflow: visible !important; height: auto !important; }
+                }
+            `}</style>
+            <header className={`no-print shadow sticky top-0 z-10 px-4 py-3 flex justify-between items-center transition-colors duration-500 ${darkmode ? "bg-slate-900 border-b border-slate-800" : "bg-white"}`}>
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" onClick={() => navigate('/create-resume')}>&larr; Edit Details</Button>
-                    <h1 className="text-lg font-semibold text-slate-800 hidden sm:block">Resume Preview</h1>
+                    <h1 className={`text-lg font-semibold hidden sm:block ${darkmode ? "text-slate-100" : "text-slate-800"}`}>Resume Preview</h1>
                 </div>
                 <div className="flex items-center gap-3">
                     {!user && <span className="text-xs text-orange-600 font-medium hidden sm:inline">Log in to save & download</span>}
@@ -240,15 +300,15 @@ const ResumePreview = () => {
 
             <main className="flex-1 overflow-hidden flex flex-col lg:flex-row">
                 {/* Left: Preview Area */}
-                <div className="flex-1 bg-slate-200 overflow-y-auto p-4 md:p-8 flex justify-center custom-scrollbar">
-                    <div className="bg-white shadow-2xl w-full max-w-[210mm] min-h-[297mm] origin-top transform scale-90 md:scale-100 transition-transform duration-300">
+                <div className={`preview-scroll-area flex-1 overflow-y-auto flex justify-center custom-scrollbar ${darkmode ? "bg-slate-950" : "bg-slate-200"}`}>
+                    <div className="resume-container py-10 px-4 w-full max-w-[210mm] min-h-fit origin-top transition-transform duration-300">
                         {renderTemplate()}
                     </div>
                 </div>
 
                 {/* Right: Template Selector Panel */}
-                <div className="w-full lg:w-96 bg-white border-l border-slate-200 p-6 overflow-y-auto">
-                    <h2 className="text-xl font-bold text-slate-800 mb-6">Choose Template</h2>
+                <div className={`sidebar-panel w-full lg:w-96 border-l p-6 overflow-y-auto transition-colors duration-500 ${darkmode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"}`}>
+                    <h2 className={`text-xl font-bold mb-6 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>Choose Template</h2>
 
                     <div className="space-y-6">
                         {templates.map(t => (
