@@ -48,7 +48,7 @@ const Contact = () => {
                     {/* Contact Info */}
                     <div className="space-y-8">
                         <div className={`p-8 rounded-2xl shadow-sm border ${darkmode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-100"}`}>
-                            <h3 className={`text-xl font-bold mb-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Contact Information</h3>
+                            <h2 className={`text-xl font-bold mb-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Contact Information</h2>
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4">
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${darkmode ? "bg-blue-900/20" : "bg-blue-50"}`}>
@@ -93,7 +93,7 @@ const Contact = () => {
 
                         {/* FAQ Preview or Socials could go here */}
                         <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl text-white shadow-lg">
-                            <h3 className="text-xl font-bold mb-4">Developer Note</h3>
+                            <h2 className="text-xl font-bold mb-4">Developer Note</h2>
                             <p className="text-slate-300 text-sm leading-relaxed mb-6">
                                 Hi, I'm Dheeraj. I built TalentIQ to help people present their best selves to employers. If you have any feedback or feature requests, please don't hesitate to reach out directly!
                             </p>

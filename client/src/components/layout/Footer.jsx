@@ -33,10 +33,10 @@ const Footer = () => {
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                                 <span className="text-white font-black text-xl">T</span>
                             </div>
-                            <h2  className={`text-2xl font-extrabold tracking-tight font-bold uppercase tracking-widest  ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
+                            <div  className={`text-2xl font-extrabold tracking-tight font-bold uppercase tracking-widest  ${darkmode ? "text-slate-200" : "text-slate-900"}`}>
                            
                                 TalentIQ
-                            </h2>
+                            </div>
                         </Link>
 
                         <p className="text-sm leading-relaxed font-medium max-w-xs">

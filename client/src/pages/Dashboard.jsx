@@ -82,9 +82,9 @@ const Dashboard = () => {
                                 {/* Content */}
                                 <div className="p-5 flex-1 flex flex-col">
                                     <div className="mb-4">
-                                        <h3 className={`font-bold text-lg mb-1 truncate ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
+                                        <h2 className={`font-bold text-lg mb-1 truncate ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
                                             {resume.title || "Untitled Resume"}
-                                        </h3>
+                                        </h2>
                                         <p className={`text-xs ${darkmode ? "text-slate-500" : "text-slate-500"}`}>
                                             Last updated: {new Date(resume.updatedAt).toLocaleDateString()}
                                         </p>

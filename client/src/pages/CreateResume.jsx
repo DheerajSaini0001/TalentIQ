@@ -543,14 +543,14 @@ const CreateResume = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="md:flex md:items-center md:justify-between mb-8">
                     <div className="min-w-0 flex-1">
-                        <h2 className={`text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight ${darkmode ? "text-slate-100" : "text-slate-900"}`}>
+                        <h1 className={`text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight ${darkmode ? "text-slate-100" : "text-slate-900"}`}>
                             {step === 1 && 'Phase 1: Personal Details'}
                             {step === 2 && 'Phase 2: Professional Profile & Experience'}
                             {step === 3 && 'Phase 3: Education Details'}
                             {step === 4 && 'Phase 4: Skills & Expertise'}
                             {step === 5 && 'Phase 5: Projects & Achievements'}
                             {step === 6 && 'Phase 6: Final Polish'}
-                        </h2>
+                        </h1>
                         <p className={`mt-1 text-sm ${darkmode ? "text-slate-400" : "text-slate-500"}`}>
                             {step === 1 && 'Please provide your essential details to get started.'}
                             {step === 2 && 'Tell us about your professional background and experience.'}
@@ -585,7 +585,7 @@ const CreateResume = () => {
                         {/* PHASE 1: Personal */}
                         {step === 1 && (
                             <div className="space-y-6 animate-fadeIn">
-                                <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Basic Information</h3></div>
+                                <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Basic Information</h2></div>
                                 <div className="flex items-center gap-6 mb-6">
                                     <div className="relative group">
                                         <div className={`h-24 w-24 rounded-full flex items-center justify-center overflow-hidden border-2 ${formData.photo ? 'border-blue-200' : (darkmode ? 'border-dashed border-slate-700 bg-slate-800' : 'border-dashed border-slate-300 bg-slate-50')}`}>
@@ -594,7 +594,7 @@ const CreateResume = () => {
                                         {formData.photo && !isUploading && (<button type="button" onClick={handleRemovePhoto} className={`absolute -top-1 -right-1 rounded-full p-1 shadow-md border transition-colors ${darkmode ? "bg-slate-800 border-slate-700 text-slate-400 hover:text-red-400" : "bg-white border-slate-200 text-slate-500 hover:text-red-500"}`}><X className="w-3 h-3" /></button>)}
                                     </div>
                                     <div>
-                                        <h4 className={`text-sm font-medium ${darkmode ? "text-slate-200" : "text-slate-900"}`}>Profile Photo</h4>
+                                        <h3 className={`text-sm font-medium ${darkmode ? "text-slate-200" : "text-slate-900"}`}>Profile Photo</h3>
                                         <div className="flex gap-2 mt-2">
                                             <input type="file" ref={fileInputRef} onChange={handlePhotoSelect} className="hidden" accept="image/*" />
                                             <Button type="button" variant="outline" size="sm" className="text-xs" onClick={() => fileInputRef.current?.click()} isLoading={isUploading} disabled={isUploading}>{formData.photo ? 'Change Photo' : 'Upload Photo'}</Button>
@@ -612,7 +612,7 @@ const CreateResume = () => {
                                     </div>
                                 </div>
                                 <div className={`border-t pt-6 ${darkmode ? "border-slate-800" : "border-slate-200"}`}>
-                                    <h3 className={`text-lg font-medium leading-6 mb-4 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Location & Links</h3>
+                                    <h2 className={`text-lg font-medium leading-6 mb-4 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Location & Links</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <Input label="City, State, Country" name="location" placeholder="e.g. Bangalore, Karnataka, India" value={formData.location} onChange={handleChange} required />
                                         <Input label="LinkedIn URL" name="linkedin" placeholder="linkedin.com/in/johndoe" value={formData.linkedin} onChange={handleChange} required />
@@ -627,7 +627,7 @@ const CreateResume = () => {
                             <div className="space-y-8 animate-fadeIn">
                                 {/* Professional Summary Section */}
                                 <div className="space-y-6">
-                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Professional Summary</h3></div>
+                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Professional Summary</h2></div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div><label className={`block text-sm font-medium leading-6 mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Current Status</label><select name="currentStatus" value={formData.currentStatus} onChange={handleChange} className={`block w-full rounded-md border-0 py-2.5 px-3 ring-1 ring-inset focus:ring-2 focus:ring-blue-600 sm:text-sm ${darkmode ? "bg-slate-900 ring-slate-800 text-slate-100" : "text-slate-900 ring-slate-300"}`}><option value="Student">Student</option><option value="Fresher">Fresher / Entry Level</option><option value="Professional">Professional / Experienced</option></select></div>
                                         <Input label="Years of Experience" name="yearsOfExperience" placeholder="e.g. 5 Years" value={formData.yearsOfExperience} onChange={handleChange} type="number" />
@@ -640,7 +640,7 @@ const CreateResume = () => {
                                 {/* Work Experience Section (Merged) */}
                                 <div className="space-y-6 pt-6 border-t border-slate-200">
                                     <div className="border-b border-slate-200 pb-2 mb-4">
-                                        <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Latest Work Experience</h3>
+                                        <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Latest Work Experience</h2>
                                         <p className={`text-sm mt-1 ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Add your most recent role here. You can add more later.</p>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -674,7 +674,7 @@ const CreateResume = () => {
                         {/* PHASE 3: Education */}
                         {step === 3 && (
                             <div className="space-y-6 animate-fadeIn">
-                                <div className="border-b border-slate-200 pb-2 mb-4"><h3 className={`block text-lg font-medium leading-6 mb-2 ${darkmode ? "text-slate-200" : "text-slate-900"}`}>Education</h3></div>
+                                <div className="border-b border-slate-200 pb-2 mb-4"><h2 className={`block text-lg font-medium leading-6 mb-2 ${darkmode ? "text-slate-200" : "text-slate-900"}`}>Education</h2></div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <Input label="Degree / Course Name" name="degree" placeholder="e.g. B.Tech" value={formData.education.degree} onChange={handleEducationChange} />
                                     <Input label="Specialization" name="field" placeholder="e.g. Computer Science" value={formData.education.field} onChange={handleEducationChange} />
@@ -691,7 +691,7 @@ const CreateResume = () => {
                         {step === 4 && (
                             <div className="space-y-6 animate-fadeIn">
                                 <div className="border-b border-slate-200 pb-2 mb-4">
-                                    <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Skills & Expertise</h3>
+                                    <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Skills & Expertise</h2>
                                     <p className={`text-sm mt-1 ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Select a category to add skills, or type manually.</p>
                                 </div>
 
@@ -744,7 +744,7 @@ const CreateResume = () => {
                                                     if (matches.length === 0) return null;
                                                     return (
                                                         <div key={cat}>
-                                                            <h5 className={`text-xs font-bold uppercase tracking-wider mb-2 border-b pb-1 ${darkmode ? "text-slate-500 border-slate-800" : "text-slate-400 border-slate-100"}`}>{cat}</h5>
+                                                            <h4 className={`text-xs font-bold uppercase tracking-wider mb-2 border-b pb-1 ${darkmode ? "text-slate-500 border-slate-800" : "text-slate-400 border-slate-100"}`}>{cat}</h4>
                                                             <div className="flex flex-wrap gap-2">
                                                                 {matches.map(skill => (
                                                                     <button
@@ -822,9 +822,9 @@ const CreateResume = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-2">
-                                        <h4 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
+                                        <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
                                             <div className="w-2 h-2 rounded-full bg-blue-500"></div> Technical & Languages
-                                        </h4>
+                                        </h3>
                                         <Input
                                             label="Programming Languages"
                                             name="technical"
@@ -835,9 +835,9 @@ const CreateResume = () => {
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <h4 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
+                                        <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
                                             <div className="w-2 h-2 rounded-full bg-purple-500"></div> Frameworks & Stack
-                                        </h4>
+                                        </h3>
                                         <Input
                                             label="Frameworks / Platforms"
                                             name="frameworks"
@@ -848,9 +848,9 @@ const CreateResume = () => {
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <h4 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
+                                        <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
                                             <div className="w-2 h-2 rounded-full bg-orange-500"></div> Tools & Infrastructure
-                                        </h4>
+                                        </h3>
                                         <Input
                                             label="Tools & Technologies"
                                             name="tools"
@@ -861,9 +861,9 @@ const CreateResume = () => {
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <h4 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
+                                        <h3 className={`text-sm font-semibold uppercase tracking-wide mb-3 flex items-center gap-2 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>
                                             <div className="w-2 h-2 rounded-full bg-green-500"></div> Soft Skills
-                                        </h4>
+                                        </h3>
                                         <label className={`block text-sm font-medium leading-6 mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Interpersonal Skills</label>
                                         <textarea
                                             name="soft"
@@ -883,7 +883,7 @@ const CreateResume = () => {
                             <div className="space-y-8 animate-fadeIn">
                                 <div className="space-y-6">
                                     <div className={`border-b pb-2 mb-4 flex justify-between items-center ${darkmode ? "border-slate-800" : "border-slate-200"}`}>
-                                        <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Projects</h3>
+                                        <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Projects</h2>
                                         <Button type="button" size="sm" variant="outline" onClick={() => addArrayItem('projects', { title: '', description: '', technologies: '', role: '', link: '' })}>+ Add Project</Button>
                                     </div>
                                     {formData.projects.map((proj, index) => (
@@ -920,7 +920,7 @@ const CreateResume = () => {
                                     ))}
                                 </div>
                                 <div className="space-y-6">
-                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Certification</h3></div>
+                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Certification</h2></div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <Input label="Certification Name" name="name" placeholder="e.g. AWS Certified Solutions Architect" value={formData.certification.name} onChange={(e) => handleNestedChange('certification', e)} />
                                         <Input label="Issuing Organization" name="issuer" placeholder="e.g. Amazon Web Services" value={formData.certification.issuer} onChange={(e) => handleNestedChange('certification', e)} />
@@ -929,7 +929,7 @@ const CreateResume = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-6">
-                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Achievement</h3></div>
+                                    <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}><h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Achievement</h2></div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <Input label="Title of Achievement" name="title" placeholder="e.g. Hackathon Winner" value={formData.achievement.title} onChange={(e) => handleNestedChange('achievement', e)} />
                                         <Input label="Year" name="year" placeholder="2023" value={formData.achievement.year} onChange={(e) => handleNestedChange('achievement', e)} />
@@ -964,7 +964,7 @@ const CreateResume = () => {
                                     <div className="space-y-6">
                                         <div className={`border-b pb-2 mb-4 flex justify-between items-center ${darkmode ? "border-slate-800" : "border-slate-200"}`}>
                                             <div>
-                                                <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Internships / Training</h3>
+                                                <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Internships / Training</h2>
                                                 <p className={`text-sm mt-1 ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Optional but valuable.</p>
                                             </div>
                                             <Button type="button" size="sm" variant="outline" onClick={() => addArrayItem('internships', { company: '', role: '', duration: '', description: '' })}>+ Add Internship</Button>
@@ -1006,7 +1006,7 @@ const CreateResume = () => {
                                     {/* Languages */}
                                     <div className="space-y-6">
                                         <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}>
-                                            <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Languages Known</h3>
+                                            <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Languages Known</h2>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <Input label="Language" name="name" placeholder="e.g. English, Spanish (Comma separated)" value={formData.language.name} onChange={(e) => handleNestedChange('language', e)} />
@@ -1025,7 +1025,7 @@ const CreateResume = () => {
                                     {/* Extra Sections */}
                                     <div className="space-y-6">
                                         <div className={`border-b pb-2 mb-4 ${darkmode ? "border-slate-800" : "border-slate-200"}`}>
-                                            <h3 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Extra Sections (Premium Feel)</h3>
+                                            <h2 className={`text-lg font-medium leading-6 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Extra Sections (Premium Feel)</h2>
                                             <p className={`text-sm mt-1 ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Select the sections you want to add.</p>
                                         </div>
 
@@ -1148,7 +1148,7 @@ const CreateResume = () => {
 
                                     {aiResults.length > 0 && !aiLoading && (
                                         <div className="space-y-3">
-                                            <h4 className={`text-sm font-medium ${darkmode ? "text-slate-300" : "text-slate-700"}`}>Select the best option:</h4>
+                                            <h3 className={`text-sm font-medium ${darkmode ? "text-slate-300" : "text-slate-700"}`}>Select the best option:</h3>
                                             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                                                 {aiResults.map((res, idx) => (
                                                     <div

@@ -102,7 +102,7 @@ const Home = () => {
 
                     {/* Trust */}
                     <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex items-center gap-4 text-sm font-semibold text-slate-500">
-                        <span>Trusted by 5000+ job seekers</span>
+                        <h2 className="text-sm font-semibold text-slate-500">Trusted by 5000+ job seekers</h2>
                         <div className="flex -space-x-2">
                             {avatarColors.map((color, i) => (
                                 <div

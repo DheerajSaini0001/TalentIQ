@@ -57,17 +57,17 @@ const Demo = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center max-w-4xl mx-auto">
                     <div>
                         <div className="text-3xl font-bold text-blue-600 mb-2">2 min</div>
-                        <h3 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Average Build Time</h3>
+                        <h2 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Average Build Time</h2>
                         <p className={`text-sm ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Create your first resume faster than ever.</p>
                     </div>
                     <div>
                         <div className="text-3xl font-bold text-blue-600 mb-2">95+</div>
-                        <h3 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>ATS Score</h3>
+                        <h2 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>ATS Score</h2>
                         <p className={`text-sm ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Optimized to get past the bots.</p>
                     </div>
                     <div>
                         <div className="text-3xl font-bold text-blue-600 mb-2">10k+</div>
-                        <h3 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Resumes Created</h3>
+                        <h2 className={`font-semibold mb-2 ${darkmode ? "text-slate-100" : "text-slate-900"}`}>Resumes Created</h2>
                         <p className={`text-sm ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Trusted by job seekers worldwide.</p>
                     </div>
                 </div>

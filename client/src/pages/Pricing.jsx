@@ -90,7 +90,7 @@ const Pricing = () => {
                             )}
 
                             <div className="mb-8">
-                                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{plan.name}</h3>
+                                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{plan.name}</h2>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-4xl font-bold text-slate-900 dark:text-slate-50">${billingCycle === 'yearly' && plan.price !== "0" ? Math.floor(plan.price * 0.8) : plan.price}</span>
                                     <span className="text-slate-500 dark:text-slate-400">/month</span>

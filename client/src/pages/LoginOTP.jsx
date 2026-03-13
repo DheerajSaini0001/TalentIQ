@@ -169,14 +169,14 @@ const LoginOTP = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-12">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center lg:text-left">
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                        <div className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
                             TalentIQ
-                        </h1>
-                        <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-50">
+                        </div>
+                        <h1 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-50">
                             {step === 'email' && 'Welcome Back'}
                             {step === 'otp' && 'Verify OTP'}
                             {step === 'register' && 'Complete Registration'}
-                        </h2>
+                        </h1>
                         <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                             {step === 'email' && 'Enter your email to receive a login code'}
                             {step === 'otp' && `Enter the 6-digit code sent to ${email}`}
