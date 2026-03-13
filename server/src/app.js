@@ -8,6 +8,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// SEO: Add SEO headers
+app.use((req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'index, follow');
+    res.setHeader('Link', '<https://talentiqai.vercel.app/>; rel="canonical"');
+    next();
+});
+
 import authRoutes from './routes/auth.routes.js';
 import resumeRoutes from './routes/resume.routes.js';
 import uploadRoutes from './routes/upload.routes.js';

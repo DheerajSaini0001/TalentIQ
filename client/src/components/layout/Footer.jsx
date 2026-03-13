@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, Code2 } from 'lucide-react';
+import { Mail, Phone, Code2, Twitter, Linkedin, Github } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 const Footer = () => {
@@ -43,6 +43,26 @@ const Footer = () => {
                             Empowering your career journey with AI-driven precision.
                             Craft resumes that recruiters actually notice.
                         </p>
+
+                        <div className="flex gap-4 pt-4">
+                            {[
+                                { icon: Twitter, href: "#" },
+                                { icon: Linkedin, href: "#" },
+                                { icon: Github, href: "#" }
+                            ].map((social, idx) => (
+                                <a
+                                    key={idx}
+                                    href={social.href}
+                                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300
+                                    ${darkmode 
+                                        ? "bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white" 
+                                        : "bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white shadow-sm"
+                                    }`}
+                                >
+                                    <social.icon className="w-4 h-4" />
+                                </a>
+                            ))}
+                        </div>
                     </div>
 
                     {/* PRODUCT */}

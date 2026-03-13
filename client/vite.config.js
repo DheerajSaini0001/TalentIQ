@@ -13,5 +13,9 @@ export default defineConfig({
         secure: false,
       },
     },
+    headers: {
+      'X-Robots-Tag': 'index, follow',
+      'Link': '<https://talentiqai.vercel.app/>; rel="canonical"',
+    },
   },
 })
