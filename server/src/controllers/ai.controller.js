@@ -17,24 +17,31 @@ export const generateContent = async (req, res) => {
 
         if (type === 'project_description') {
             isArrayResponse = true;
-            systemPrompt = `You are an expert resume writer. Generate exactly 3 professional, impactful bullet points for this project.
+            systemPrompt = `You are an expert ATS-friendly resume writer. Your task is to generate EXACTLY 3 powerful, achievement-oriented bullet points for a project description based on the provided text.
 
-Rules:
-- Focus on achievements and measurable results
-- Highlight technologies and skills used
-- Use action verbs (Developed, Implemented, Designed, Built, Optimized)
-- Keep each point concise (1-2 lines max)
-- Return ONLY a JSON array of 3 strings
-- No markdown, no explanations, just the JSON array
+CRITICAL RULES:
+- Focus heavily on quantifiable achievements, metrics, and measurable outcomes.
+- Highlight specific technologies, frameworks, and methodologies used.
+- Begin each bullet with a strong action verb (e.g., Engineered, Architected, Spearheaded).
+- Ensure each bullet is professional, targeted, and concise (1-2 lines maximum).
+- Return ONLY a valid JSON array containing exactly 3 string elements.
+- Do NOT include any markdown formatting, conversational text, or explanations. Just the raw JSON array.
 
-Example format: ["Built a full-stack e-commerce platform using MERN stack with 10,000+ monthly users", "Implemented secure payment gateway integration with Stripe and PayPal", "Optimized database queries reducing load time by 40%"]
+Example Output format:
+["Engineered a scalable e-commerce backend utilizing Node.js and MongoDB, resulting in a 40% reduction in API response times and supporting 10k+ concurrent users.", "Architected a responsive frontend with React and TailwindCSS, improving mobile user retention by 25%.", "Integrated secure Stripe payment gateways and OAuth2 authentication, achieving a 99.9% successful transaction rate."]
 
-Project: ${prompt}`;
+User's Project Details: ${prompt}`;
         } else if (type === 'summary') {
             isArrayResponse = false;
-            systemPrompt = `You are an expert resume writer. ${prompt}
+            systemPrompt = `You are an expert executive resume writer. Your task is to write a compelling, professional resume summary based on the provided details.
 
-IMPORTANT: Return ONLY the professional summary text. No markdown, no quotes, no explanations - just the summary itself.`;
+CRITICAL RULES:
+- Write a 3-4 sentence paragraph that highlights the candidate's core strengths, years of experience, and key accomplishments.
+- Keep the tone highly professional, confident, and action-oriented.
+- Avoid generic buzzwords; use industry-specific terminology.
+- Return ONLY the paragraph text itself. Do not include quotes, markdown formatting, prefixes, or any conversational text.
+
+User's Details: ${prompt}`;
         } else {
             systemPrompt = prompt;
         }
@@ -65,37 +72,10 @@ IMPORTANT: Return ONLY the professional summary text. No markdown, no quotes, no
 
         if (!response.ok) {
             console.error('Gemini API Error:', data);
-
-            // Fallback responses based on type
-            if (type === 'summary') {
-                const summaryFallback = "Experienced professional with a proven track record of delivering high-quality results. Skilled in problem-solving, collaboration, and driving innovation. Passionate about leveraging technology to create impactful solutions and enhance user experiences.";
-                console.log("Using summary fallback response");
-                return res.status(200).json({ content: summaryFallback });
-            }
-
-            // Project description fallbacks
-            const fallbacks = [
-                [
-                    "Developed a full-stack web application using modern technologies and best practices",
-                    "Implemented responsive UI/UX design ensuring seamless user experience across devices",
-                    "Integrated secure authentication and data management features"
-                ],
-                [
-                    "Built and deployed a scalable application with robust backend architecture",
-                    "Designed intuitive user interface with focus on accessibility and performance",
-                    "Optimized application performance and implemented security best practices"
-                ],
-                [
-                    "Created a comprehensive solution addressing key user requirements and business goals",
-                    "Utilized industry-standard frameworks and tools for efficient development",
-                    "Delivered a production-ready application with thorough testing and documentation"
-                ]
-            ];
-
-            const randomFallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-            console.log("Using project fallback response");
-
-            return res.status(200).json({ result: randomFallback });
+            return res.status(response.status).json({ 
+                message: data?.error?.message || 'Failed to generate content from AI. Please check your API key.',
+                details: data
+            });
         }
 
         // Extract generated text from Gemini response
@@ -140,31 +120,13 @@ IMPORTANT: Return ONLY the professional summary text. No markdown, no quotes, no
 
         // Ensure we have exactly 3 items
         if (!Array.isArray(result) || result.length === 0) {
-            result = [
-                "Developed a comprehensive solution using modern technologies",
-                "Implemented key features with focus on user experience and performance",
-                "Delivered a production-ready application with best practices"
-            ];
+            return res.status(500).json({ message: 'AI failed to generate a valid response array. Please try again.' });
         }
 
         res.status(200).json({ result });
 
     } catch (error) {
         console.error('AI Controller Error:', error);
-
-        // Final fallback based on type
-        if (req.body.type === 'summary') {
-            const summaryFallback = "Experienced professional with a proven track record of delivering high-quality results. Skilled in problem-solving, collaboration, and driving innovation. Passionate about leveraging technology to create impactful solutions and enhance user experiences.";
-            return res.status(200).json({ content: summaryFallback });
-        }
-
-        // Project description fallback
-        const fallback = [
-            "Developed and deployed a full-stack application using industry-standard technologies",
-            "Implemented responsive design and intuitive user interface for optimal user experience",
-            "Integrated essential features including authentication, data management, and security"
-        ];
-
-        res.status(200).json({ result: fallback });
+        res.status(500).json({ message: error.message || 'Internal Server Error during AI generation' });
     }
 };

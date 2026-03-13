@@ -265,7 +265,7 @@ const CreateResume = () => {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Failed to generate content. Please try again.");
+            toast.error(error.message || "Failed to generate content. Please check your API key.");
         } finally {
             setAiLoading(false);
         }

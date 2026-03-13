@@ -82,11 +82,7 @@ Requirements:
             }
         } catch (error) {
             console.error('AI Generation Error:', error);
-            toast.error(error.message || 'Failed to generate AI summary. Please try again.');
-
-            // Fallback to basic template if AI fails
-            const fallbackSummary = `Experienced ${resumeData?.personalInfo?.jobTitle || 'professional'} with a proven track record of success. Skilled in problem-solving and driving results. Passionate about leveraging technology to optimize processes and enhance user experiences.`;
-            setSummary(fallbackSummary);
+            toast.error(error.message || 'Failed to generate AI summary. Please check your API key.');
         } finally {
             setIsGenerating(false);
         }
