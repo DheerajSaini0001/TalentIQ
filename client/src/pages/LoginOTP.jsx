@@ -4,6 +4,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '../context/ThemeContext';
+import useAuthStore from '../store/auth.store';
 import authService from '../services/auth.service';
 import { Mail, KeyRound, ArrowRight, User, Lock, CheckCircle2 } from 'lucide-react';
 
@@ -20,6 +21,7 @@ const LoginOTP = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { darkmode } = useTheme();
+    const { setUser } = useAuthStore();
     const from = location.state?.from?.pathname || '/dashboard';
 
     // Timer for resend OTP
@@ -84,11 +86,13 @@ const LoginOTP = () => {
                     otp,
                     password: password || undefined,
                 });
+                setUser(response);
                 toast.success('Registration successful!');
                 navigate(from, { replace: true });
             } else {
                 // Login with OTP
                 const response = await authService.verifyOTP(email, otp);
+                setUser(response);
                 toast.success('Login successful!');
                 navigate(from, { replace: true });
             }

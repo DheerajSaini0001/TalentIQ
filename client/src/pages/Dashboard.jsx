@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import useAuthStore from '../store/auth.store';
 import useResumeStore from '../store/resume.store';
 import Button from '../components/ui/Button';
 import { useTheme } from '../context/ThemeContext';
@@ -8,7 +7,6 @@ import { FileText, Plus, Edit, Eye, Download, Trash2, Loader } from 'lucide-reac
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
-    const { user, logout } = useAuthStore();
     const { resumes, getResumes, isLoading, deleteResume } = useResumeStore();
     const { darkmode } = useTheme();
     const navigate = useNavigate();
@@ -16,11 +14,6 @@ const Dashboard = () => {
     useEffect(() => {
         getResumes();
     }, [getResumes]);
-
-    const onLogout = () => {
-        logout();
-        navigate('/login');
-    };
 
     const handleDelete = async (id, e) => {
         e.preventDefault();
@@ -39,19 +32,6 @@ const Dashboard = () => {
 
     return (
         <div className={`min-h-screen transition-colors duration-500 ${darkmode ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"}`}>
-            {/* Navbar */}
-            <nav className={`px-8 py-4 flex justify-between items-center shadow-sm ${darkmode ? "bg-slate-900 border-b border-slate-800" : "bg-white border-b border-slate-200"}`}>
-                <div className="flex items-center gap-3">
-                    <div className="bg-blue-600 p-2 rounded-lg">
-                        <FileText className="text-white w-6 h-6" />
-                    </div>
-                    <span className="text-xl font-bold tracking-tight">TalentIQ Dashboard</span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <span className={`hidden sm:block text-sm font-medium ${darkmode ? "text-slate-400" : "text-slate-500"}`}>Welcome, {user?.name}</span>
-                    <Button onClick={onLogout} variant="ghost" className="text-red-500 hover:bg-red-50 hover:text-red-600">Logout</Button>
-                </div>
-            </nav>
 
             <div className="max-w-7xl mx-auto p-8">
                 <div className="flex justify-between items-center mb-8">

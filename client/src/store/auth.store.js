@@ -65,6 +65,10 @@ const useAuthStore = create((set) => ({
         authService.logout();
         set({ user: null });
     },
+
+    setUser: (userData) => {
+        set({ user: userData });
+    },
 }));
 
 export default useAuthStore;
