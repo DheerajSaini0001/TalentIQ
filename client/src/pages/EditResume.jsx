@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 import useResumeStore from '../store/resume.store';
 import Button from '../components/ui/Button';
 import SectionSidebar from '../components/resume/SectionSidebar';
@@ -26,6 +28,12 @@ const ResumeEditor = () => {
     const navigate = useNavigate();
     const { getResume, currentResume, updateResume, isLoading } = useResumeStore();
     const [activeSection, setActiveSection] = useState('personal');
+    const resumeRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        contentRef: resumeRef,
+        documentTitle: currentResume?.title || 'Resume',
+    });
 
     useEffect(() => {
         if (id) {
@@ -95,7 +103,7 @@ const ResumeEditor = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" onClick={() => navigate(`/resume/${id}/preview`)}>Preview</Button>
-                        <Button size="sm" onClick={() => window.print()}>Download PDF</Button>
+                        <Button size="sm" onClick={handlePrint}>Download PDF</Button>
                     </div>
                 </header>
 
@@ -131,15 +139,15 @@ const ResumeEditor = () => {
             </div>
 
             {/* Print View - Only visible when printing */}
-            {/* Print View - Only visible when printing */}
-            <div className="hidden print:block print:absolute print:top-0 print:left-0 print:w-full print:bg-white print:z-50">
-                <style>{`
-                    @media print {
-                        @page { margin: 0; }
-                        body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
-                    }
-                `}</style>
-                <div className="w-[210mm] min-h-[297mm] mx-auto bg-white">
+            {/* Print View - Handled by react-to-print and wrapped off-screen so it has layout for cloning. */}
+            <div style={{ position: "absolute", top: "-10000px", left: "-10000px" }}>
+                <div ref={resumeRef} className="w-[210mm] min-h-[297mm] mx-auto bg-white p-8">
+                    <style>{`
+                        @media print {
+                            @page { margin: 0; size: auto; }
+                            body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; background: white; }
+                        }
+                    `}</style>
                     <TemplateComponent data={currentResume} />
                 </div>
             </div>

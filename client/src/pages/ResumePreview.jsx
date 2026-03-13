@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
 import Template1 from '../components/resume/templates/Template1';
 import Template2 from '../components/resume/templates/Template2';
 import Template3 from '../components/resume/templates/Template3';
@@ -22,6 +24,12 @@ const ResumePreview = () => {
     const { id } = useParams(); // Import useParams
     const { getResume, currentResume, createResume, updateResume, isLoading, resumes, getResumes } = useResumeStore();
     const { darkmode } = useTheme();
+
+    const resumeRef = useRef();
+    const handlePrint = useReactToPrint({
+        contentRef: resumeRef,
+        documentTitle: currentResume?.title || 'Resume',
+    });
 
     // Resize fetch Effect
     useEffect(() => {
@@ -83,7 +91,7 @@ const ResumePreview = () => {
                     }
                 });
                 toast.success('Resume updated!');
-                setTimeout(() => window.print(), 500);
+                setTimeout(() => handlePrint(), 500);
             } else {
                 // Creating NEW resume
                 // Check if duplicate title exists
@@ -103,7 +111,7 @@ const ResumePreview = () => {
                     toast.success('Existing resume updated!');
                     // Redirect to the existing resume's preview ID to keep state consistent
                     window.history.replaceState(null, '', `/resume/${existingResume._id}/preview`);
-                    setTimeout(() => window.print(), 500);
+                    setTimeout(() => handlePrint(), 500);
                 } else {
                     // Create NEW
                     const payload = processPayload(resumeData);
@@ -114,7 +122,7 @@ const ResumePreview = () => {
                     if (newResume) {
                         toast.success('Resume saved successfully!');
                         window.history.replaceState(null, '', `/resume/${newResume._id}/preview`);
-                        setTimeout(() => window.print(), 500);
+                        setTimeout(() => handlePrint(), 500);
                     }
                 }
             }
@@ -301,7 +309,7 @@ const ResumePreview = () => {
             <main className="flex-1 overflow-hidden flex flex-col lg:flex-row">
                 {/* Left: Preview Area */}
                 <div className={`preview-scroll-area flex-1 overflow-y-auto flex justify-center custom-scrollbar ${darkmode ? "bg-slate-950" : "bg-slate-200"}`}>
-                    <div className="resume-container py-10 px-4 w-full max-w-[210mm] min-h-fit origin-top transition-transform duration-300">
+                    <div ref={resumeRef} className="resume-container py-10 px-4 w-full max-w-[210mm] min-h-fit origin-top transition-transform duration-300">
                         {renderTemplate()}
                     </div>
                 </div>
