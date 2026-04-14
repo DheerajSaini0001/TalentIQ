@@ -1,13 +1,31 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.model.js';
-import { JWT_SECRET } from '../config/env.js';
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config/env.js';
 import { sendOTPEmail, sendWelcomeEmail } from '../services/email.service.js';
 
-// Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, JWT_SECRET, {
-        expiresIn: '30d',
+// Generate Access Token
+const generateAccessToken = (id) => {
+    return jwt.sign({ id }, JWT_ACCESS_SECRET, {
+        expiresIn: '15m',
     });
+};
+
+// Generate Refresh Token
+const generateRefreshToken = (id) => {
+    return jwt.sign({ id }, JWT_REFRESH_SECRET, {
+        expiresIn: '7d',
+    });
+};
+
+// Helper: Get both tokens and save refresh token to user
+const getTokens = async (user) => {
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    
+    user.refreshToken = refreshToken;
+    await user.save();
+    
+    return { accessToken, refreshToken };
 };
 
 // @desc    Send OTP for login/signup
@@ -77,12 +95,15 @@ export const verifyOTPLogin = async (req, res) => {
         user.otpExpiry = undefined;
         await user.save();
 
+        const { accessToken, refreshToken } = await getTokens(user);
+
         res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
             isVerified: user.isVerified,
-            token: generateToken(user._id),
+            accessToken,
+            refreshToken,
         });
     } catch (error) {
         console.error('Verify OTP Error:', error);
@@ -132,12 +153,15 @@ export const registerWithOTP = async (req, res) => {
             console.error('Failed to send welcome email:', err)
         );
 
+        const { accessToken, refreshToken } = await getTokens(user);
+
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             isVerified: user.isVerified,
-            token: generateToken(user._id),
+            accessToken,
+            refreshToken,
         });
     } catch (error) {
         console.error('Register with OTP Error:', error);
@@ -166,11 +190,13 @@ export const registerUser = async (req, res) => {
         });
 
         if (user) {
+            const { accessToken, refreshToken } = await getTokens(user);
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id),
+                accessToken,
+                refreshToken,
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
@@ -190,11 +216,13 @@ export const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
+            const { accessToken, refreshToken } = await getTokens(user);
             res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id),
+                accessToken,
+                refreshToken,
             });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });
@@ -214,4 +242,35 @@ export const getMe = async (req, res) => {
         email: req.user.email,
     };
     res.status(200).json(user);
+};
+
+// @desc    Refresh access token
+// @route   POST /api/auth/refresh
+// @access  Public
+export const refreshAccessToken = async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        if (!token) {
+            return res.status(401).json({ message: 'Refresh token required' });
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
+
+        // Find user
+        const user = await User.findById(decoded.id);
+
+        if (!user || user.refreshToken !== token) {
+            return res.status(401).json({ message: 'Invalid refresh token' });
+        }
+
+        // Generate new access token
+        const accessToken = generateAccessToken(user._id);
+
+        res.json({ accessToken });
+    } catch (error) {
+        console.error('Refresh Token Error:', error);
+        res.status(401).json({ message: 'Invalid or expired refresh token' });
+    }
 };

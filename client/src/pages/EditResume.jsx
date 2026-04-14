@@ -22,6 +22,7 @@ import Template4 from '../components/resume/templates/Template4';
 import Template5 from '../components/resume/templates/Template5';
 import Template6 from '../components/resume/templates/Template6';
 import Template7 from '../components/resume/templates/Template7';
+import Template8 from '../components/resume/templates/Template8';
 
 const ResumeEditor = () => {
     const { id } = useParams();
@@ -81,7 +82,8 @@ const ResumeEditor = () => {
         executive: Template4,
         tech: Template5,
         compact: Template6,
-        bold: Template7
+        bold: Template7,
+        classic: Template8
     }[currentResume?.preferences?.designStyle] || Template1;
 
     return (
@@ -144,8 +146,9 @@ const ResumeEditor = () => {
                 <div ref={resumeRef} className="w-[210mm] min-h-[297mm] mx-auto bg-white p-8">
                     <style>{`
                         @media print {
-                            @page { margin: 0; size: auto; }
-                            body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; background: white; }
+                            @page { margin: 10mm; size: auto; }
+                            body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+                            .print-container { padding: 0 !important; }
                         }
                     `}</style>
                     <TemplateComponent data={currentResume} />

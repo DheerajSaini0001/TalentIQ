@@ -19,7 +19,9 @@ import Dashboard from './pages/Dashboard';
 import CreateResume from './pages/CreateResume';
 import ResumePreview from './pages/ResumePreview';
 import EditResume from './pages/EditResume';
+import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminRoute from './components/auth/AdminRoute';
 
 import ScrollToTop from './components/layout/ScrollToTop';
 
@@ -56,6 +58,11 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/resume/:id/edit" element={<EditResume />} />
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
             </Route>
 
             {/* 404 Route */}

@@ -12,6 +12,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 export const PORT = process.env.PORT || 5000;
 export const MONGO_URI = process.env.MONGO_URI;
 export const JWT_SECRET = process.env.JWT_SECRET || 'default_jwt_secret';
+export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || JWT_SECRET;
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default_refresh_secret';
 
 // Google OAuth
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;

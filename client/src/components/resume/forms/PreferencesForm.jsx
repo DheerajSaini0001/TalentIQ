@@ -22,7 +22,7 @@ const PreferencesForm = ({ resumeData }) => {
         updateResume(currentResume._id, { preferences: newPrefs });
     };
 
-    const styles = ['modern', 'professional', 'creative', 'executive', 'tech', 'compact', 'bold'];
+    const styles = ['modern', 'classic', 'professional', 'creative', 'executive', 'tech', 'compact', 'bold'];
 
     return (
         <div className="space-y-6">

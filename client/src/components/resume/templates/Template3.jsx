@@ -2,27 +2,28 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Linkedin, Globe, ExternalLink } from 'lucide-react';
 
-const Template3 = ({ data }) => {
+const Template3 = ({ data, fontSize }) => {
     if (!data) return null;
     const { personalInfo, title, summaryInputs, experience = [], education = [], skills = [], projects = [], internships = [], languages = [], achievements = [], certifications = [] } = data;
 
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '';
-        if (dateStr === 'Present') return 'Present';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    };
-
     const containerRef = React.useRef(null);
-    const [density, setDensity] = React.useState(0);
+    const [density, setDensity] = React.useState(2);
 
     React.useEffect(() => {
-        setDensity(0);
-    }, [data]);
+        if (fontSize) {
+            if (fontSize >= 14) setDensity(0);
+            else if (fontSize >= 12) setDensity(1);
+            else if (fontSize >= 10) setDensity(2);
+            else if (fontSize >= 8) setDensity(3);
+            else setDensity(4);
+        } else {
+            setDensity(2);
+        }
+    }, [fontSize]);
 
     React.useLayoutEffect(() => {
         const checkHeight = () => {
-            if (containerRef.current) {
+            if (!fontSize && containerRef.current) {
                 const height = containerRef.current.scrollHeight;
                 if (height > 1130 && density < 4) {
                     setDensity(prev => prev + 1);
@@ -32,7 +33,7 @@ const Template3 = ({ data }) => {
         checkHeight();
         window.addEventListener('resize', checkHeight);
         return () => window.removeEventListener('resize', checkHeight);
-    }, [density, data]);
+    }, [density, data, fontSize]);
 
     const styles = {
         padding: ['p-8', 'p-6', 'p-5', 'p-4', 'p-4'],

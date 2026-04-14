@@ -5,7 +5,8 @@ import {
     getMe,
     sendOTP,
     verifyOTPLogin,
-    registerWithOTP
+    registerWithOTP,
+    refreshAccessToken
 } from '../controllers/auth.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
 
@@ -19,6 +20,7 @@ router.post('/login', loginUser);
 router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTPLogin);
 router.post('/register-otp', registerWithOTP);
+router.post('/refresh-token', refreshAccessToken);
 
 // Protected routes
 router.get('/me', protect, getMe);

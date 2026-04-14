@@ -2,21 +2,31 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Linkedin, Globe, ExternalLink, Calendar } from 'lucide-react';
 
-const Template1 = ({ data }) => {
+const Template1 = ({ data, fontSize }) => {
     const containerRef = React.useRef(null);
-    const [density, setDensity] = React.useState(0);
+    const [density, setDensity] = React.useState(2); // Middle ground default
+
+    // Map fontSize to density: 14->0, 12->1, 10->2, 8->3, 6->4
+    React.useEffect(() => {
+        if (fontSize) {
+            if (fontSize >= 14) setDensity(0);
+            else if (fontSize >= 12) setDensity(1);
+            else if (fontSize >= 10) setDensity(2);
+            else if (fontSize >= 8) setDensity(3);
+            else setDensity(4);
+        }
+    }, [fontSize]);
 
     // Reset density when data changes
     React.useEffect(() => {
         setDensity(0);
     }, [data]);
 
-    // Check height and compact if needed
+    // Check height and compact if needed (only if NO manual fontSize)
     React.useLayoutEffect(() => {
         const checkHeight = () => {
-            if (containerRef.current) {
+            if (!fontSize && containerRef.current) {
                 const height = containerRef.current.scrollHeight;
-                // A4 height in pixels approx 1123px.
                 if (height > 1130 && density < 4) {
                     setDensity(prev => prev + 1);
                 }
@@ -25,7 +35,7 @@ const Template1 = ({ data }) => {
         checkHeight();
         window.addEventListener('resize', checkHeight);
         return () => window.removeEventListener('resize', checkHeight);
-    }, [density, data]);
+    }, [density, data, fontSize]);
 
     if (!data) return null;
 
@@ -72,7 +82,7 @@ const Template1 = ({ data }) => {
     return (
         <div
             ref={containerRef}
-            className={`bg-white text-slate-900 w-full min-h-[1100px] shadow-lg print:shadow-none font-sans relative transition-all duration-300 ${getStyle('padding')} ${getStyle('text')} ${getStyle('leading')}`}
+            className={`bg-white text-slate-900 w-full min-h-[1000px] shadow-lg print:shadow-none font-sans relative transition-all duration-300 ${getStyle('padding')} ${getStyle('text')} ${getStyle('leading')}`}
         >
 
             {/* Header */}

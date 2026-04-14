@@ -2,7 +2,23 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Linkedin, Globe, ExternalLink, Calendar } from 'lucide-react';
 
-const Template2 = ({ data }) => {
+const Template2 = ({ data, fontSize }) => {
+    const containerRef = React.useRef(null);
+    const [density, setDensity] = React.useState(2);
+
+    React.useEffect(() => {
+        if (fontSize) {
+            if (fontSize >= 14) setDensity(0);
+            else if (fontSize >= 12) setDensity(1);
+            else if (fontSize >= 10) setDensity(2);
+            else if (fontSize >= 8) setDensity(3);
+            else setDensity(4);
+        } else {
+            // Reset density if fontSize is removed or becomes null/undefined
+            setDensity(2); // Default density
+        }
+    }, [fontSize]);
+
     if (!data) return null;
 
     const {
@@ -22,18 +38,10 @@ const Template2 = ({ data }) => {
         publications = []
     } = data;
 
-    const containerRef = React.useRef(null);
-    const [density, setDensity] = React.useState(0);
-
-    // Reset density when data changes
-    React.useEffect(() => {
-        setDensity(0);
-    }, [data]);
-
-    // Check height and compact if needed
+    // Check height and compact if needed (only if NO manual fontSize)
     React.useLayoutEffect(() => {
         const checkHeight = () => {
-            if (containerRef.current) {
+            if (!fontSize && containerRef.current) {
                 const height = containerRef.current.scrollHeight;
                 if (height > 1130 && density < 4) {
                     setDensity(prev => prev + 1);
@@ -43,7 +51,7 @@ const Template2 = ({ data }) => {
         checkHeight();
         window.addEventListener('resize', checkHeight);
         return () => window.removeEventListener('resize', checkHeight);
-    }, [density, data]);
+    }, [density, data, fontSize]);
 
     const styles = {
         sidebarPadding: ['p-5', 'p-4', 'p-4', 'p-3', 'p-2'],

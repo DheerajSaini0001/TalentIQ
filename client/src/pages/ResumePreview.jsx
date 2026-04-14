@@ -10,6 +10,7 @@ import Template4 from '../components/resume/templates/Template4';
 import Template5 from '../components/resume/templates/Template5';
 import Template6 from '../components/resume/templates/Template6';
 import Template7 from '../components/resume/templates/Template7';
+import Template8 from '../components/resume/templates/Template8';
 import Button from '../components/ui/Button';
 import useAuthStore from '../store/auth.store';
 import useResumeStore from '../store/resume.store';
@@ -245,27 +246,31 @@ const ResumePreview = () => {
     };
 
     const [selectedTemplate, setSelectedTemplate] = useState('modern');
+    const [fontSize, setFontSize] = useState(10); // Default 10 (base 1)
 
     if (!resumeData) return <div className="min-h-screen flex items-center justify-center">Loading preview...</div>;
 
     const displayData = id ? resumeData : processPayload(resumeData);
 
     const renderTemplate = () => {
+        const props = { data: displayData, fontSize: fontSize };
         switch (selectedTemplate) {
-            case 'modern': return <Template1 data={displayData} />;
-            case 'professional': return <Template2 data={displayData} />;
-            case 'creative': return <Template3 data={displayData} />;
-            case 'executive': return <Template4 data={displayData} />;
-            case 'tech': return <Template5 data={displayData} />;
-            case 'compact': return <Template6 data={displayData} />;
-            case 'bold': return <Template7 data={displayData} />;
-            default: return <Template1 data={displayData} />;
+            case 'modern': return <Template1 {...props} />;
+            case 'professional': return <Template2 {...props} />;
+            case 'creative': return <Template3 {...props} />;
+            case 'executive': return <Template4 {...props} />;
+            case 'tech': return <Template5 {...props} />;
+            case 'compact': return <Template6 {...props} />;
+            case 'bold': return <Template7 {...props} />;
+            case 'classic': return <Template8 {...props} />;
+            default: return <Template1 {...props} />;
         }
     };
 
     // Template metadata for sidebar
     const templates = [
         { id: 'modern', name: 'Modern Professional', color: 'bg-slate-300' },
+        { id: 'classic', name: 'Standard Classic', color: 'bg-white border-2 border-slate-300' },
         { id: 'professional', name: 'Dark Sidebar', color: 'bg-slate-800' },
         { id: 'creative', name: 'Minimal Creative', color: 'bg-gray-100' },
         { id: 'executive', name: 'Executive Serif', color: 'bg-white border' },
@@ -280,13 +285,13 @@ const ResumePreview = () => {
                 @media print {
                     @page { margin: 0; size: auto; }
                     body { background: white; margin: 0; padding: 0; }
-                    header, nav, .sidebar-panel, .no-print { display: none !important; }
+                    .sidebar-panel, .no-print { display: none !important; }
                     .resume-container { 
                         transform: none !important; 
                         width: 100% !important; 
                         max-width: 100% !important; 
                         margin: 0 !important; 
-                        padding: 0 !important;
+                        padding: 10mm !important;
                         box-shadow: none !important;
                     }
                     main { display: block !important; overflow: visible !important; }
@@ -316,6 +321,22 @@ const ResumePreview = () => {
 
                 {/* Right: Template Selector Panel */}
                 <div className={`sidebar-panel w-full lg:w-96 border-l p-6 overflow-y-auto transition-colors duration-500 ${darkmode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"}`}>
+                    <div className="mb-8">
+                        <label className={`block text-sm font-bold mb-3 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>Adjust Font Size</label>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => setFontSize(prev => Math.max(prev - 1, 6))}
+                                className={`w-10 h-10 flex items-center justify-center rounded-lg border hover:bg-slate-50 transition-colors ${darkmode ? "border-slate-700 text-white" : "border-slate-200"}`}
+                            >-</button>
+                            <div className="flex-1 text-center font-medium text-blue-600">{fontSize}px</div>
+                            <button 
+                                onClick={() => setFontSize(prev => Math.min(prev + 1, 14))}
+                                className={`w-10 h-10 flex items-center justify-center rounded-lg border hover:bg-slate-50 transition-colors ${darkmode ? "border-slate-700 text-white" : "border-slate-200"}`}
+                            >+</button>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-2 italic">Tip: Use smaller size to fit more content on a single page.</p>
+                    </div>
+
                     <h2 className={`text-xl font-bold mb-6 ${darkmode ? "text-slate-100" : "text-slate-800"}`}>Choose Template</h2>
 
                     <div className="space-y-6">
